@@ -25,14 +25,21 @@ function BgVideo({ src, fallbackImg, pos = 'center center' }) {
   )
 }
 
-/* ── BgImage — tries primary, falls back ─────────────────────────── */
+/* ── BgImage — fallback always rendered underneath, primary on top ── */
 function BgImage({ primary, fallback, pos = 'center center' }) {
-  const [useFallback, setUseFallback] = useState(false)
-  const src = useFallback ? fallback : primary
+  const [primaryFailed, setPrimaryFailed] = useState(false)
   return (
-    <img src={src} alt=""
-      onError={() => { if (!useFallback) setUseFallback(true) }}
-      style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:pos }} />
+    <>
+      {/* Fallback always visible as base layer */}
+      <img src={fallback} alt=""
+        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:pos }} />
+      {/* Primary sits on top — hidden if it fails to load */}
+      {!primaryFailed && (
+        <img src={primary} alt=""
+          onError={() => setPrimaryFailed(true)}
+          style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:pos }} />
+      )}
+    </>
   )
 }
 
@@ -221,11 +228,13 @@ function StreakScreen() {
 // Blue overtone — consistent across every feature background
 const BLUE_TINT = 'rgba(17,35,120,0.52)'
 
-// Running photo slots — drop files into public/ to activate automatically.
-// Fallbacks to existing hero images until you save the new shots as files.
-// run-road.jpg   → two runners on road (motion blur, forest + sign)
-// run-lake.jpg   → two runners by lake (open sky)
-// run-forest.jpg → two runners on forest path (close, green)
+// New photo slots — save these files to public/ to activate:
+// run-mountain.jpg → 3 trail runners on Alpine hillside (warm, golden)
+// run-race.jpg     → race start, many runners, motion blur (warm tones)
+// run-dusk.jpg     → two silhouette runners at dusk (already very blue)
+// run-road.jpg     → two runners on road, forest + sign
+// run-lake.jpg     → two runners by lake, open sky
+// run-forest.jpg   → two runners on forest path
 
 const FEATURES = [
   {
@@ -235,9 +244,9 @@ const FEATURES = [
     desc: 'Every morning Jeani gives you a Motion score from 0–100, surfaces your top Spotlight insight, and shows you exactly what to focus on today.',
     screenshot: '/screenshots/home.png',
     screenVideo: '/screen-home.mp4',
-    bgPhoto: '/run-lake.jpg',       // two runners, open sky — wide, bright
-    bgFallback: '/hero-motion3.jpg',
-    bgPos: 'center 55%',
+    bgPhoto: '/run-mountain.jpg',
+    bgFallback: '/bg-court2.png',
+    bgPos: 'center 45%',
     accent: C.amber,
   },
   {
@@ -246,9 +255,9 @@ const FEATURES = [
     tagline: 'Five dimensions of how your body moves.',
     desc: 'Joint Changes, Symmetry, Mobility, Movement Diversity, and Step Volume — combined into a single daily score that tells the real story of how you\'re moving.',
     screenshot: '/screenshots/motion.png',
-    bgPhoto: '/run-road.jpg',       // two runners on road — wide motion blur
-    bgFallback: '/bg-court2.png',
-    bgPos: 'center center',
+    bgPhoto: '/run-race.jpg',
+    bgFallback: '/hero-motion.jpg',
+    bgPos: 'center 40%',
     accent: C.amber,
   },
   {
@@ -257,9 +266,9 @@ const FEATURES = [
     tagline: 'A daily target built around you.',
     desc: 'Your Movement Goal adapts to your score and history. Hit it consistently and your streak builds — miss it and Jeani recalibrates so tomorrow feels achievable.',
     screenshot: '/screenshots/goal-achieved.png',
-    bgPhoto: '/run-forest.jpg',     // two runners on forest path — close, green
-    bgFallback: '/hero-motion.jpg',
-    bgPos: 'center 45%',
+    bgPhoto: '/run-dusk.jpg',
+    bgFallback: '/hero-motion3.jpg',
+    bgPos: 'center 50%',
     accent: C.green,
   },
   {
@@ -268,9 +277,9 @@ const FEATURES = [
     tagline: 'Finds what needs attention before you feel it.',
     desc: 'Jeani analyses your joint data daily and surfaces the one area most at risk — complete with a trend chart, context, and personalised stretch recommendations.',
     screenshot: '/screenshots/spotlight.png',
-    bgPhoto: '/run-lake.jpg',       // reuse lake — feels different at spotlight position
+    bgPhoto: '/run-lake.jpg',
     bgFallback: '/bg-court1.png',
-    bgPos: 'center 40%',
+    bgPos: 'center 55%',
     accent: C.green,
   },
   {
@@ -281,7 +290,7 @@ const FEATURES = [
     screenshot: '/screenshots/chat.png',
     bgPhoto: '/run-road.jpg',
     bgFallback: '/hero-motion2.png',
-    bgPos: 'center 60%',
+    bgPos: 'center center',
     accent: C.sand,
   },
   {
