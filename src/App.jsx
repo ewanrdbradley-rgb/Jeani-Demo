@@ -611,44 +611,47 @@ function Particles() {
 }
 
 function Intro({ onDone }) {
-  useEffect(() => { const t = setTimeout(onDone,4200); return () => clearTimeout(t) },[onDone])
+  useEffect(() => { const t = setTimeout(onDone,4500); return () => clearTimeout(t) },[onDone])
   return (
     <motion.div exit={{ opacity:0,transition:{ duration:0.9 } }}
       style={{ position:'fixed',inset:0,zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden' }}>
-      {/* Intro video — opening segment of the run */}
+
+      {/* Discus video — rotated to landscape, fills full frame */}
       <video autoPlay muted loop playsInline
-        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center' }}>
-        <source src="/vid-intro.mp4" type="video/mp4" />
+        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top' }}>
+        <source src="/vid-intro-main.mp4" type="video/mp4" />
       </video>
+      {/* Photo fallback */}
       <img src="/hero-motion3.jpg" alt=""
         style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',zIndex:-1 }} />
-      <div style={{ position:'absolute',inset:0,background:'linear-gradient(135deg,rgba(3,5,18,0.72) 0%,rgba(3,5,18,0.48) 50%,rgba(3,5,18,0.68) 100%)' }} />
-      <Grain op={0.12} blend="overlay" />
+
+      {/* Blue haze — Jeani deep blue tint over the whole frame */}
+      <div style={{ position:'absolute',inset:0,background:'rgba(17,35,120,0.52)' }} />
+      {/* Radial centre glow — darker at edges, lighter behind text */}
+      <div style={{ position:'absolute',inset:0,background:'radial-gradient(ellipse 70% 60% at 50% 55%, rgba(17,35,120,0.1) 0%, rgba(3,5,18,0.55) 100%)' }} />
+      {/* Bottom fade */}
+      <div style={{ position:'absolute',bottom:0,left:0,right:0,height:'30%',background:'linear-gradient(0deg,rgba(3,5,18,0.7) 0%,transparent 100%)' }} />
+
+      <Grain op={0.1} blend="overlay" />
       <Particles />
 
-      {/* Right panel — second video segment */}
-      <div style={{ position:'absolute',right:0,top:0,bottom:0,width:'32%',overflow:'hidden' }}>
-        <video autoPlay muted loop playsInline
-          style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:'center' }}>
-          <source src="/vid-spotlight.mp4" type="video/mp4" />
-        </video>
-        <div style={{ position:'absolute',inset:0,background:'linear-gradient(90deg,rgba(3,5,18,0.98) 0%,rgba(3,5,18,0.2) 100%)' }} />
-      </div>
-
+      {/* Centre content */}
       <div style={{ position:'relative',zIndex:5,textAlign:'center',maxWidth:580 }}>
         <motion.img src="/logos/Jeani Wordmark White.png" alt="Jeani"
           initial={{ opacity:0,scale:0.85,y:14 }} animate={{ opacity:1,scale:1,y:0 }} transition={{ duration:1.2,ease:[0.22,1,0.36,1] }}
-          style={{ height:70,marginBottom:28,filter:'drop-shadow(0 0 50px rgba(255,255,255,0.12))' }} />
+          style={{ height:70,marginBottom:28,filter:'drop-shadow(0 0 60px rgba(255,255,255,0.18))' }} />
         <motion.div initial={{ opacity:0,y:10 }} animate={{ opacity:1,y:0 }} transition={{ delay:0.7,duration:0.9 }}
-          style={{ fontFamily:'CrimsonPro,serif',fontStyle:'italic',fontSize:28,color:C.sand,letterSpacing:0.3,textShadow:'0 0 50px rgba(251,236,207,0.2)' }}>
+          style={{ fontFamily:'CrimsonPro,serif',fontStyle:'italic',fontSize:28,color:C.sand,letterSpacing:0.3,textShadow:'0 2px 30px rgba(17,35,120,0.8)' }}>
           Movement is Medicine.
         </motion.div>
         <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:1.1,duration:0.7 }}
-          style={{ fontSize:12,color:'rgba(255,255,255,0.35)',marginTop:10,letterSpacing:1 }}>
+          style={{ fontSize:12,color:'rgba(255,255,255,0.4)',marginTop:10,letterSpacing:1.5 }}>
           Starting the movement · 10.20.2025
         </motion.div>
-        <motion.button initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:2,duration:0.5 }} onClick={onDone}
-          style={{ marginTop:52,background:'rgba(251,236,207,0.08)',border:'1px solid rgba(251,236,207,0.22)',color:'rgba(251,236,207,0.72)',borderRadius:30,padding:'13px 40px',fontSize:11,fontFamily:'HostGrotesk',cursor:'pointer',letterSpacing:2.5,backdropFilter:'blur(10px)' }}>
+        <motion.button
+          initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} transition={{ delay:2,duration:0.5 }}
+          onClick={onDone}
+          style={{ marginTop:52,background:'rgba(17,35,120,0.4)',border:'1px solid rgba(251,236,207,0.3)',color:'rgba(251,236,207,0.9)',borderRadius:30,padding:'14px 44px',fontSize:11,fontFamily:'HostGrotesk',cursor:'pointer',letterSpacing:2.5,backdropFilter:'blur(12px)',boxShadow:'0 0 30px rgba(17,35,120,0.5)' }}>
           EXPLORE
         </motion.button>
       </div>
