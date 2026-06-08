@@ -9,6 +9,17 @@ const Grain = ({ op = 0.1, blend = 'overlay' }) => (
   <div style={{ position:'absolute',inset:0,pointerEvents:'none',zIndex:5,backgroundImage:NOISE,backgroundRepeat:'repeat',backgroundSize:'160px',opacity:op,mixBlendMode:blend }} />
 )
 
+/* ── BgImage — tries primary, falls back ─────────────────────────── */
+function BgImage({ primary, fallback, pos = 'center center' }) {
+  const [useFallback, setUseFallback] = useState(false)
+  const src = useFallback ? fallback : primary
+  return (
+    <img src={src} alt=""
+      onError={() => { if (!useFallback) setUseFallback(true) }}
+      style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:pos }} />
+  )
+}
+
 /* ── Top nav ─────────────────────────────────────────────────────── */
 const TABS = [
   { id:'app',     label:'THE APP',      icon:'◆' },
@@ -191,6 +202,11 @@ function StreakScreen() {
 /* ══════════════════════════════════════════════════════════════════
    FEATURES config
 ══════════════════════════════════════════════════════════════════ */
+// Running photos — drop these files into public/ and they'll auto-load:
+// run1.png, run2.png, run3.png, run4.png (the 4 motion-blur running shots)
+// Until then falls back to existing hero images.
+const RUN = ['/run1.png','/run2.png','/run3.png','/run4.png']
+
 const FEATURES = [
   {
     id: 'home',
@@ -198,10 +214,11 @@ const FEATURES = [
     tagline: 'Your daily motion, at a glance.',
     desc: 'Every morning Jeani gives you a Motion score from 0–100, surfaces your top Spotlight insight, and shows you exactly what to focus on today.',
     screenshot: '/screenshots/home.png',
-    bgPhoto: '/hero-motion3.jpg',
-    bgPos: 'center top',
+    bgPhoto: RUN[2],        // two runners by lake — open, bright
+    bgFallback: '/hero-motion3.jpg',
+    bgPos: 'center center',
     accent: C.amber,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.92) 0%,rgba(2,5,20,0.75) 40%,rgba(2,5,20,0.45) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.88) 0%,rgba(2,5,20,0.72) 40%,rgba(2,5,20,0.38) 100%)',
   },
   {
     id: 'motion',
@@ -209,21 +226,23 @@ const FEATURES = [
     tagline: 'Five dimensions of how your body moves.',
     desc: 'Joint Changes, Symmetry, Mobility, Movement Diversity, and Step Volume — combined into a single daily score that tells the real story of how you\'re moving.',
     screenshot: '/screenshots/motion.png',
-    bgPhoto: '/bg-court2.png',
+    bgPhoto: RUN[3],        // two runners in forest — close, dynamic
+    bgFallback: '/bg-court2.png',
     bgPos: 'center center',
     accent: C.amber,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.94) 0%,rgba(2,5,20,0.78) 40%,rgba(2,5,20,0.4) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.9) 0%,rgba(2,5,20,0.74) 40%,rgba(2,5,20,0.38) 100%)',
   },
   {
     id: 'goal',
     label: 'Motion Goal',
     tagline: 'A daily target built around you.',
     desc: 'Your Movement Goal adapts to your score and history. Hit it consistently and your streak builds — miss it and Jeani recalibrates so tomorrow feels achievable.',
-    screenshot: null,
-    bgPhoto: '/hero-motion.jpg',
+    screenshot: '/screenshots/goal-achieved.png',
+    bgPhoto: RUN[1],        // two runners on road — wide, motion blur
+    bgFallback: '/hero-motion.jpg',
     bgPos: 'center center',
     accent: C.green,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.94) 0%,rgba(2,5,20,0.78) 40%,rgba(2,5,20,0.4) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.9) 0%,rgba(2,5,20,0.74) 40%,rgba(2,5,20,0.38) 100%)',
   },
   {
     id: 'spotlight',
@@ -231,10 +250,11 @@ const FEATURES = [
     tagline: 'Finds what needs attention before you feel it.',
     desc: 'Jeani analyses your joint data daily and surfaces the one area most at risk — complete with a trend chart, context, and personalised stretch recommendations.',
     screenshot: '/screenshots/spotlight.png',
-    bgPhoto: '/bg-court1.png',
+    bgPhoto: RUN[0],        // bridge runner — red, high contrast
+    bgFallback: '/bg-court1.png',
     bgPos: 'center top',
     accent: C.green,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.94) 0%,rgba(2,5,20,0.78) 40%,rgba(2,5,20,0.35) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.9) 0%,rgba(2,5,20,0.74) 40%,rgba(2,5,20,0.32) 100%)',
   },
   {
     id: 'chat',
@@ -242,10 +262,11 @@ const FEATURES = [
     tagline: 'Your personal movement coach, always on.',
     desc: 'Ask anything about your score, your joints, or your training. Jeani answers with context from your actual data — not generic advice.',
     screenshot: '/screenshots/chat.png',
-    bgPhoto: '/hero-motion2.png',
-    bgPos: 'center center',
+    bgPhoto: RUN[2],
+    bgFallback: '/hero-motion2.png',
+    bgPos: 'center bottom',
     accent: C.sand,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.96) 0%,rgba(2,5,20,0.8) 40%,rgba(2,5,20,0.4) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.94) 0%,rgba(2,5,20,0.78) 40%,rgba(2,5,20,0.4) 100%)',
   },
   {
     id: 'streak',
@@ -253,10 +274,11 @@ const FEATURES = [
     tagline: 'Consistency is the only metric that compounds.',
     desc: 'Your streak tracks daily goal completion. Eight days. Thirty days. The data shows consistent movers recover faster and stay injury-free longer.',
     screenshot: null,
-    bgPhoto: '/hero-motion4.png',
+    bgPhoto: RUN[1],
+    bgFallback: '/hero-motion4.png',
     bgPos: 'center center',
     accent: C.amber,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.94) 0%,rgba(2,5,20,0.78) 40%,rgba(2,5,20,0.4) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.9) 0%,rgba(2,5,20,0.74) 40%,rgba(2,5,20,0.38) 100%)',
   },
 ]
 
@@ -272,11 +294,11 @@ function TheApp() {
 
   return (
     <div style={{ width:'100%',height:'100%',position:'relative',overflow:'hidden' }}>
-      {/* Full-bleed background photo */}
+      {/* Full-bleed background photo — tries running shot first, falls back to hero */}
       <AnimatePresence mode="wait">
         <motion.div key={feat.id + '-bg'} initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.5 }}
           style={{ position:'absolute',inset:0,zIndex:0 }}>
-          <img src={feat.bgPhoto} alt="" style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:feat.bgPos }} />
+          <BgImage primary={feat.bgPhoto} fallback={feat.bgFallback} pos={feat.bgPos} />
           <div style={{ position:'absolute',inset:0,background:feat.gradOverlay }} />
           <Grain op={0.07} blend="overlay" />
         </motion.div>
@@ -575,16 +597,22 @@ function Intro({ onDone }) {
   return (
     <motion.div exit={{ opacity:0,transition:{ duration:0.9 } }}
       style={{ position:'fixed',inset:0,zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden' }}>
-      {/* Athlete photo full bleed */}
-      <img src="/hero-motion3.jpg" alt="" style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center' }} />
-      <div style={{ position:'absolute',inset:0,background:'linear-gradient(135deg,rgba(3,5,18,0.78) 0%,rgba(3,5,18,0.55) 50%,rgba(3,5,18,0.72) 100%)' }} />
-      <Grain op={0.14} blend="overlay" />
+      {/* Video background — loops silently */}
+      <video autoPlay muted loop playsInline
+        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center' }}>
+        <source src="/run-video.mp4" type="video/mp4" />
+      </video>
+      {/* Fallback photo if video not supported */}
+      <img src="/hero-motion3.jpg" alt=""
+        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center',zIndex:-1 }} />
+      <div style={{ position:'absolute',inset:0,background:'linear-gradient(135deg,rgba(3,5,18,0.72) 0%,rgba(3,5,18,0.48) 50%,rgba(3,5,18,0.68) 100%)' }} />
+      <Grain op={0.12} blend="overlay" />
       <Particles />
 
-      {/* Court photo strip — right side */}
-      <div style={{ position:'absolute',right:0,top:0,bottom:0,width:'35%',overflow:'hidden' }}>
-        <img src="/bg-court2.png" alt="" style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:'center' }} />
-        <div style={{ position:'absolute',inset:0,background:'linear-gradient(90deg,rgba(3,5,18,0.95) 0%,rgba(3,5,18,0.3) 100%)' }} />
+      {/* Running photo strip — right side */}
+      <div style={{ position:'absolute',right:0,top:0,bottom:0,width:'32%',overflow:'hidden' }}>
+        <BgImage primary="/run2.png" fallback="/bg-court2.png" pos="center center" />
+        <div style={{ position:'absolute',inset:0,background:'linear-gradient(90deg,rgba(3,5,18,0.98) 0%,rgba(3,5,18,0.25) 100%)' }} />
       </div>
 
       <div style={{ position:'relative',zIndex:5,textAlign:'center',maxWidth:580 }}>
