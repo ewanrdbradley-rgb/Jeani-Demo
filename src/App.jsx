@@ -686,61 +686,60 @@ function TheScience() {
       <div style={{ flex:1,display:'flex',zIndex:1,overflow:'hidden' }}>
 
         {/* ── Left — hurdling video ── */}
-        <div style={{ width:'36%',position:'relative',overflow:'hidden',display:'flex',flexDirection:'column',justifyContent:'flex-end',padding:'40px 36px' }}>
+        <div style={{ width:'34%',position:'relative',overflow:'hidden',display:'flex',flexDirection:'column',justifyContent:'flex-end',padding:'36px 32px' }}>
           <video autoPlay muted loop playsInline
             style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center' }}>
             <source src="/vid-science.mp4" type="video/mp4" />
           </video>
           <div style={{ position:'absolute',inset:0,background:'rgba(17,35,120,0.50)' }} />
-          <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(3,5,18,0.1) 0%,rgba(3,5,18,0.88) 100%)' }} />
+          <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(3,5,18,0.05) 0%,rgba(3,5,18,0.9) 100%)' }} />
           <Grain op={0.12} blend="overlay" />
-
           <motion.div initial={{ opacity:0,y:24 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.8 }}
             style={{ position:'relative',zIndex:4 }}>
-            <img src="/logos/Jeani Wordmark White.png" style={{ height:26,marginBottom:22,opacity:0.9 }} alt="Jeani" />
-            <div style={{ fontFamily:'CrimsonPro,serif',fontSize:28,fontWeight:700,color:'#fff',lineHeight:1.1,marginBottom:14 }}>
+            <img src="/logos/Jeani Wordmark White.png" style={{ height:26,marginBottom:20,opacity:0.9 }} alt="Jeani" />
+            <div style={{ fontFamily:'CrimsonPro,serif',fontSize:32,fontWeight:700,color:'#fff',lineHeight:1.1,marginBottom:14 }}>
               From Your Joints,<br />To Your Wrist.
             </div>
-            <div style={{ fontFamily:'CrimsonPro,serif',fontStyle:'italic',fontSize:14,color:'rgba(255,255,255,0.7)',lineHeight:1.7 }}>
+            <div style={{ fontFamily:'CrimsonPro,serif',fontStyle:'italic',fontSize:15,color:'rgba(255,255,255,0.72)',lineHeight:1.65 }}>
               "One sensor. Six joint estimates. Every session."
             </div>
           </motion.div>
         </div>
 
         {/* ── Right — headline + three pillars ── */}
-        <div style={{ flex:1,padding:'38px 48px 28px',display:'flex',flexDirection:'column',overflow:'hidden' }}>
+        <div style={{ flex:1,padding:'32px 44px 0px',display:'flex',flexDirection:'column',overflow:'hidden' }}>
 
-          {/* Headline */}
-          <motion.div initial={{ opacity:0,y:16 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.55 }}
-            style={{ marginBottom:28 }}>
-            <div style={{ fontSize:10,color:C.blue,fontFamily:'HostGrotesk',fontWeight:700,letterSpacing:2.5,marginBottom:10 }}>THE SCIENCE BEHIND JEANI</div>
-            <div style={{ fontFamily:'CrimsonPro,serif',fontSize:36,fontWeight:700,color:'#0a0e20',lineHeight:1.1,marginBottom:12 }}>
+          {/* Headline block — compact */}
+          <motion.div initial={{ opacity:0,y:14 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.5 }}
+            style={{ marginBottom:22,flexShrink:0 }}>
+            <div style={{ fontSize:10,color:C.blue,fontFamily:'HostGrotesk',fontWeight:700,letterSpacing:2.5,marginBottom:8 }}>THE SCIENCE BEHIND JEANI</div>
+            <div style={{ fontFamily:'CrimsonPro,serif',fontSize:34,fontWeight:700,color:'#0a0e20',lineHeight:1.08,marginBottom:10 }}>
               Real-world movement intelligence.<br />Clinically grounded.
             </div>
-            <div style={{ fontSize:13,color:'#666',lineHeight:1.75,maxWidth:480 }}>
-              Jeani uses triaxial accelerometry and gait proxy extraction to derive musculoskeletal loading estimates for your hip, knee, and ankle — bilaterally, every session. No lab. No extra hardware. Just your wrist.
+            <div style={{ fontSize:14,color:'#5a5a6a',lineHeight:1.65,maxWidth:500 }}>
+              Triaxial accelerometry and gait proxy extraction — combined to give you six bilateral joint estimates per session. No lab. No extra hardware. Just your wrist.
             </div>
           </motion.div>
 
-          {/* Three pillars — large cards */}
-          <div style={{ display:'flex',flexDirection:'column',gap:14,flex:1,justifyContent:'center' }}>
+          {/* Three pillars — fill remaining height evenly */}
+          <div style={{ display:'flex',flexDirection:'column',gap:10,flex:1,paddingBottom:16 }}>
             {pillars.map((p,i) => (
               <motion.div key={p.label}
-                initial={{ opacity:0,x:28 }}
+                initial={{ opacity:0,x:24 }}
                 animate={{ opacity:1,x:0 }}
-                transition={{ delay:0.15 + i*0.14,duration:0.55,ease:[0.22,1,0.36,1] }}
-                style={{ background:C.blue,borderRadius:20,padding:'20px 24px',display:'flex',gap:22,alignItems:'flex-start',position:'relative',overflow:'hidden',flex:1 }}>
+                transition={{ delay:0.12 + i*0.12,duration:0.5,ease:[0.22,1,0.36,1] }}
+                style={{ background:C.blue,borderRadius:18,padding:'18px 22px',display:'flex',gap:20,alignItems:'center',position:'relative',overflow:'hidden',flex:1 }}>
                 <Grain op={0.08} blend="overlay" />
 
-                {/* Icon badge */}
-                <div style={{ width:44,height:44,borderRadius:14,background:'rgba(251,236,207,0.12)',border:'1px solid rgba(251,236,207,0.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,flexShrink:0,marginTop:2 }}>
+                {/* Icon */}
+                <div style={{ width:50,height:50,borderRadius:16,background:'rgba(251,236,207,0.1)',border:'1px solid rgba(251,236,207,0.18)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,flexShrink:0 }}>
                   {p.icon}
                 </div>
 
                 <div style={{ position:'relative',zIndex:1,flex:1 }}>
-                  <div style={{ fontSize:13.5,color:C.sand,fontWeight:700,fontFamily:'HostGrotesk',marginBottom:3 }}>{p.label}</div>
-                  <div style={{ fontSize:11,color:'rgba(251,236,207,0.55)',marginBottom:8,fontFamily:'HostGrotesk',letterSpacing:0.2 }}>{p.sub}</div>
-                  <div style={{ fontSize:12,color:'rgba(251,236,207,0.72)',lineHeight:1.6 }}>{p.detail}</div>
+                  <div style={{ fontSize:16,color:C.sand,fontWeight:700,fontFamily:'CrimsonPro,serif',marginBottom:4,letterSpacing:0.2 }}>{p.label}</div>
+                  <div style={{ fontSize:12,color:'rgba(251,236,207,0.5)',marginBottom:7,fontFamily:'HostGrotesk' }}>{p.sub}</div>
+                  <div style={{ fontSize:13,color:'rgba(251,236,207,0.78)',lineHeight:1.58 }}>{p.detail}</div>
                 </div>
               </motion.div>
             ))}
@@ -749,7 +748,7 @@ function TheScience() {
       </div>
 
       {/* Footer bar */}
-      <div style={{ background:C.blue,padding:'14px 48px',display:'flex',alignItems:'center',justifyContent:'space-between',position:'relative',overflow:'hidden',zIndex:1,flexShrink:0 }}>
+      <div style={{ background:C.blue,padding:'13px 44px',display:'flex',alignItems:'center',justifyContent:'space-between',position:'relative',overflow:'hidden',zIndex:1,flexShrink:0 }}>
         <Grain op={0.1} blend="overlay" />
         <div style={{ fontFamily:'CrimsonPro,serif',fontStyle:'italic',fontSize:14,color:C.sand,position:'relative',zIndex:1 }}>
           Accurate by design — Jeani reads movement where it matters most.
