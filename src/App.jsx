@@ -411,10 +411,15 @@ function TheScience() {
     <div style={{ width:'100%',height:'100%',background:'#f0ebe0',display:'flex',flexDirection:'column',position:'relative',overflow:'hidden' }}>
       <Grain op={0.05} blend="multiply" />
       <div style={{ flex:1,display:'flex',zIndex:1 }}>
-        {/* Left photo */}
+        {/* Left — joints video background */}
         <div style={{ width:'40%',position:'relative',overflow:'hidden',display:'flex',alignItems:'flex-end',padding:44 }}>
-          <img src="/team-prize.jpg" alt="Jeani team" style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'top center' }} />
-          <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(17,35,120,0.15) 0%,rgba(5,10,40,0.9) 100%)' }} />
+          <video autoPlay muted loop playsInline
+            style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center' }}>
+            <source src="/vid-science.mp4" type="video/mp4" />
+          </video>
+          {/* Blue haze to match the rest of the demo */}
+          <div style={{ position:'absolute',inset:0,background:'rgba(17,35,120,0.48)' }} />
+          <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,transparent 30%,rgba(5,10,40,0.92) 100%)' }} />
           <Grain op={0.12} blend="overlay" />
           <motion.div initial={{ opacity:0,y:20 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.7 }} style={{ position:'relative',zIndex:4 }}>
             <img src="/logos/Jeani Wordmark White.png" style={{ height:30,marginBottom:20 }} alt="Jeani" />
