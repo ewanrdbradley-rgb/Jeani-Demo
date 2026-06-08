@@ -225,6 +225,7 @@ const FEATURES = [
     tagline: 'Your daily motion, at a glance.',
     desc: 'Every morning Jeani gives you a Motion score from 0–100, surfaces your top Spotlight insight, and shows you exactly what to focus on today.',
     screenshot: '/screenshots/home.png',
+    screenVideo: '/screen-home.mp4',   // live app recording plays inside the phone
     bgVideo: '/vid-home.mp4',
     bgFallback: '/hero-motion3.jpg',
     bgPos: 'center center',
@@ -345,7 +346,13 @@ function TheApp() {
       <div style={{ position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',zIndex:8,paddingLeft:300 }}>
         <AnimatePresence mode="wait">
           <Phone key={feat.id} id={feat.id}>
-            {feat.screenshot ? (
+            {feat.screenVideo ? (
+              /* Live screen recording plays inside the phone frame */
+              <video key={feat.screenVideo} autoPlay muted loop playsInline
+                style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:'top',display:'block' }}>
+                <source src={feat.screenVideo} type="video/mp4" />
+              </video>
+            ) : feat.screenshot ? (
               <ScreenShot src={feat.screenshot}>
                 {FallbackScreen && <FallbackScreen />}
               </ScreenShot>
