@@ -244,8 +244,8 @@ const FEATURES = [
     desc: 'Every morning Jeani gives you a Motion score from 0–100, surfaces your top Spotlight insight, and shows you exactly what to focus on today.',
     screenshot: '/screenshots/home.png',
     screenVideo: '/screen-home.mp4',
-    bgPhoto: '/run-mountain.jpg',
-    bgFallback: '/bg-court2.png',
+    bgPhoto: '/run-lake.jpg',      // two runners by lake, open sky
+    bgFallback: '/run-lake.jpg',
     bgPos: 'center 45%',
     accent: C.amber,
   },
@@ -255,9 +255,9 @@ const FEATURES = [
     tagline: 'Five dimensions of how your body moves.',
     desc: 'Joint Changes, Symmetry, Mobility, Movement Diversity, and Step Volume — combined into a single daily score that tells the real story of how you\'re moving.',
     screenshot: '/screenshots/motion.png',
-    bgPhoto: '/run-race.jpg',
-    bgFallback: '/hero-motion.jpg',
-    bgPos: 'center 40%',
+    bgPhoto: '/run-mountain.jpg',  // 3 Alpine trail runners
+    bgFallback: '/run-mountain.jpg',
+    bgPos: 'center 50%',
     accent: C.amber,
   },
   {
@@ -266,8 +266,8 @@ const FEATURES = [
     tagline: 'A daily target built around you.',
     desc: 'Your Movement Goal adapts to your score and history. Hit it consistently and your streak builds — miss it and Jeani recalibrates so tomorrow feels achievable.',
     screenshot: '/screenshots/goal-achieved.png',
-    bgPhoto: '/run-dusk.jpg',
-    bgFallback: '/hero-motion3.jpg',
+    bgPhoto: '/run-dusk.jpg',      // two silhouettes at dusk — deep blue
+    bgFallback: '/run-dusk.jpg',
     bgPos: 'center 50%',
     accent: C.green,
   },
@@ -277,9 +277,9 @@ const FEATURES = [
     tagline: 'Finds what needs attention before you feel it.',
     desc: 'Jeani analyses your joint data daily and surfaces the one area most at risk — complete with a trend chart, context, and personalised stretch recommendations.',
     screenshot: '/screenshots/spotlight.png',
-    bgPhoto: '/run-lake.jpg',
-    bgFallback: '/bg-court1.png',
-    bgPos: 'center 55%',
+    bgPhoto: '/run-race.jpg',      // race start blur, warm motion
+    bgFallback: '/run-race.jpg',
+    bgPos: 'center 40%',
     accent: C.green,
   },
   {
@@ -288,9 +288,9 @@ const FEATURES = [
     tagline: 'Your personal movement coach, always on.',
     desc: 'Ask anything about your score, your joints, or your training. Jeani answers with context from your actual data — not generic advice.',
     screenshot: '/screenshots/chat.png',
-    bgPhoto: '/run-road.jpg',
-    bgFallback: '/hero-motion2.png',
-    bgPos: 'center center',
+    bgPhoto: '/run-bridge.jpg',    // bridge runners, green trees
+    bgFallback: '/run-bridge.jpg',
+    bgPos: 'center 40%',
     accent: C.sand,
   },
   {
@@ -299,9 +299,9 @@ const FEATURES = [
     tagline: 'Consistency is the only metric that compounds.',
     desc: 'Your streak tracks daily goal completion. Eight days. Thirty days. The data shows consistent movers recover faster and stay injury-free longer.',
     screenshot: null,
-    bgPhoto: '/run-forest.jpg',
-    bgFallback: '/hero-motion4.png',
-    bgPos: 'center center',
+    bgPhoto: '/run-mountain.jpg',  // back to mountain for variety
+    bgFallback: '/run-mountain.jpg',
+    bgPos: 'center 60%',
     accent: C.amber,
   },
 ]
