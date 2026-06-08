@@ -183,41 +183,147 @@ function GoalScreen() {
 
 function StreakScreen() {
   const days = ['M','T','W','T','F','S','S']
+  const [litDays, setLitDays] = useState(0)
+  const [countUp, setCountUp] = useState(0)
+
+  // Animate streak number counting up
+  useEffect(() => {
+    let v = 0
+    const iv = setInterval(() => {
+      v += 1; setCountUp(Math.min(v, 8))
+      if (v >= 8) clearInterval(iv)
+    }, 80)
+    return () => clearInterval(iv)
+  }, [])
+
+  // Light up day dots one by one
+  useEffect(() => {
+    if (litDays >= 6) return
+    const t = setTimeout(() => setLitDays(d => d + 1), litDays === 0 ? 400 : 180)
+    return () => clearTimeout(t)
+  }, [litDays])
+
   return (
-    <div style={{ width:'100%',height:'100%',background:'linear-gradient(180deg,#3a1000 0%,#0a0200 100%)',position:'relative',overflow:'auto' }}>
-      <div style={{ position:'absolute',top:'8%',left:'20%',width:200,height:200,borderRadius:'50%',background:`radial-gradient(circle,${C.amber}55 0%,transparent 70%)`,filter:'blur(45px)' }} />
-      <div style={{ position:'relative',zIndex:2,padding:'50px 16px 84px',minHeight:'100%' }}>
-        <div style={{ textAlign:'center',marginBottom:18 }}>
-          <div style={{ fontSize:50,lineHeight:1 }}>🔥</div>
-          <div style={{ fontSize:90,fontFamily:'CrimsonPro,serif',fontWeight:700,color:C.amber,lineHeight:0.88,letterSpacing:-4,marginTop:8 }}>8</div>
-          <div style={{ fontSize:16,color:'rgba(255,255,255,0.5)',marginTop:6 }}>day streak</div>
+    <div style={{ width:'100%',height:'100%',position:'relative',overflow:'hidden',background:'#06030a' }}>
+
+      {/* Background — deep amber/dark gradient like real app screens */}
+      <div style={{ position:'absolute',inset:0,background:'linear-gradient(160deg,#1a0a00 0%,#0e0500 35%,#04020a 100%)' }} />
+
+      {/* Ambient glows */}
+      <div style={{ position:'absolute',top:'-5%',left:'50%',transform:'translateX(-50%)',width:280,height:280,borderRadius:'50%',background:`radial-gradient(circle,${C.amber}44 0%,transparent 68%)`,filter:'blur(40px)',zIndex:1 }} />
+      <div style={{ position:'absolute',top:'25%',left:'10%',width:160,height:160,borderRadius:'50%',background:`radial-gradient(circle,rgba(245,90,0,0.2) 0%,transparent 70%)`,filter:'blur(30px)',zIndex:1 }} />
+
+      {/* Content — no scroll, fills frame, no footer */}
+      <div style={{ position:'relative',zIndex:2,width:'100%',height:'100%',padding:'52px 18px 22px',display:'flex',flexDirection:'column',gap:14 }}>
+
+        {/* Hero — flame + counter */}
+        <div style={{ textAlign:'center',flex:'0 0 auto' }}>
+          <motion.div
+            animate={{ scale:[1,1.08,1] }}
+            transition={{ duration:1.8,repeat:Infinity,ease:'easeInOut' }}
+            style={{ fontSize:52,lineHeight:1,marginBottom:4 }}>
+            🔥
+          </motion.div>
+          <motion.div
+            initial={{ opacity:0,scale:0.7 }}
+            animate={{ opacity:1,scale:1 }}
+            transition={{ duration:0.6,ease:[0.22,1,0.36,1] }}
+            style={{ fontSize:96,fontFamily:'CrimsonPro,serif',fontWeight:700,color:C.amber,lineHeight:0.85,letterSpacing:-4 }}>
+            {countUp}
+          </motion.div>
+          <motion.div
+            initial={{ opacity:0,y:6 }}
+            animate={{ opacity:1,y:0 }}
+            transition={{ delay:0.4,duration:0.5 }}
+            style={{ fontSize:14,color:'rgba(255,255,255,0.55)',marginTop:8,letterSpacing:0.5 }}>
+            day streak
+          </motion.div>
         </div>
-        <div style={{ background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:20,padding:'16px 18px',marginBottom:14 }}>
-          <div style={{ fontSize:9.5,color:'rgba(255,255,255,0.28)',letterSpacing:2,marginBottom:12 }}>THIS WEEK</div>
+
+        {/* This week */}
+        <motion.div
+          initial={{ opacity:0,y:12 }}
+          animate={{ opacity:1,y:0 }}
+          transition={{ delay:0.3,duration:0.5 }}
+          style={{ background:'rgba(255,255,255,0.05)',backdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:20,padding:'14px 16px' }}>
+          <div style={{ fontSize:9,color:'rgba(255,255,255,0.3)',letterSpacing:2.5,marginBottom:11,fontFamily:'HostGrotesk' }}>THIS WEEK</div>
           <div style={{ display:'flex',justifyContent:'space-between' }}>
             {days.map((d,i) => (
-              <div key={i} style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:6 }}>
-                <div style={{ width:32,height:32,borderRadius:'50%',background:i<6?C.amber:'rgba(255,255,255,0.07)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,color:i<6?'#000':'rgba(255,255,255,0.18)',boxShadow:i<6?`0 0 14px ${C.amber}66`:'none',fontWeight:700 }}>{i<6?'✓':''}</div>
-                <span style={{ fontSize:10,color:'rgba(255,255,255,0.32)',fontFamily:'HostGrotesk' }}>{d}</span>
+              <div key={i} style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:5 }}>
+                <motion.div
+                  initial={{ scale:0.5,opacity:0 }}
+                  animate={i < litDays
+                    ? { scale:1, opacity:1, background:C.amber }
+                    : { scale:1, opacity:1, background:'rgba(255,255,255,0.07)' }
+                  }
+                  transition={{ duration:0.3, delay: i < litDays ? 0 : 0 }}
+                  style={{
+                    width:34, height:34, borderRadius:'50%',
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    fontSize:13, color: i < litDays ? '#000' : 'rgba(255,255,255,0.2)',
+                    fontWeight:700,
+                    boxShadow: i < litDays ? `0 0 18px ${C.amber}88` : 'none',
+                  }}>
+                  {i < litDays ? '✓' : ''}
+                </motion.div>
+                <span style={{ fontSize:9.5,color:'rgba(255,255,255,0.3)',fontFamily:'HostGrotesk' }}>{d}</span>
               </div>
             ))}
           </div>
-        </div>
-        <div style={{ background:`rgba(245,160,0,0.08)`,border:`1px solid rgba(245,160,0,0.18)`,borderRadius:18,padding:'16px 18px',textAlign:'center',marginBottom:14 }}>
-          <div style={{ fontSize:14.5,color:C.amber,fontStyle:'italic',fontFamily:'CrimsonPro,serif',lineHeight:1.5 }}>"Consistency is the only metric that compounds."</div>
-        </div>
-        <div style={{ background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:20,padding:'16px 18px' }}>
+        </motion.div>
+
+        {/* Quote */}
+        <motion.div
+          initial={{ opacity:0,y:12 }}
+          animate={{ opacity:1,y:0 }}
+          transition={{ delay:0.5,duration:0.5 }}
+          style={{ background:'rgba(245,160,0,0.07)',border:'1px solid rgba(245,160,0,0.2)',borderRadius:18,padding:'14px 16px',textAlign:'center' }}>
+          <div style={{ fontSize:13.5,color:C.amber,fontStyle:'italic',fontFamily:'CrimsonPro,serif',lineHeight:1.55 }}>
+            "Consistency is the only metric that compounds."
+          </div>
+        </motion.div>
+
+        {/* Stats */}
+        <motion.div
+          initial={{ opacity:0,y:12 }}
+          animate={{ opacity:1,y:0 }}
+          transition={{ delay:0.65,duration:0.5 }}
+          style={{ background:'rgba(255,255,255,0.05)',backdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:20,padding:'14px 18px' }}>
           <div style={{ display:'flex',justifyContent:'space-around' }}>
-            {[['Best','14 days'],['This month','22 / 31'],['All time','8 🔥']].map(([k,v]) => (
-              <div key={k} style={{ textAlign:'center' }}>
-                <div style={{ fontSize:16,color:'#fff',fontWeight:700,fontFamily:'CrimsonPro,serif' }}>{v}</div>
-                <div style={{ fontSize:10,color:'rgba(255,255,255,0.28)',marginTop:3 }}>{k}</div>
-              </div>
+            {[['Best streak','14 days'],['This month','22 / 31'],['All time','8 🔥']].map(([k,v],i) => (
+              <motion.div key={k}
+                initial={{ opacity:0,y:8 }}
+                animate={{ opacity:1,y:0 }}
+                transition={{ delay:0.7 + i*0.1,duration:0.4 }}
+                style={{ textAlign:'center' }}>
+                <div style={{ fontSize:17,color:'#fff',fontWeight:700,fontFamily:'CrimsonPro,serif' }}>{v}</div>
+                <div style={{ fontSize:9.5,color:'rgba(255,255,255,0.3)',marginTop:3,fontFamily:'HostGrotesk' }}>{k}</div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
+
+        {/* Progress bar — days left in month */}
+        <motion.div
+          initial={{ opacity:0 }}
+          animate={{ opacity:1 }}
+          transition={{ delay:0.8,duration:0.5 }}
+          style={{ padding:'0 2px' }}>
+          <div style={{ display:'flex',justifyContent:'space-between',marginBottom:6 }}>
+            <span style={{ fontSize:9.5,color:'rgba(255,255,255,0.3)',fontFamily:'HostGrotesk' }}>MONTHLY PROGRESS</span>
+            <span style={{ fontSize:9.5,color:C.amber,fontFamily:'HostGrotesk',fontWeight:600 }}>22 / 31 days</span>
+          </div>
+          <div style={{ height:5,background:'rgba(255,255,255,0.08)',borderRadius:3,overflow:'hidden' }}>
+            <motion.div
+              initial={{ width:0 }}
+              animate={{ width:'71%' }}
+              transition={{ delay:0.9,duration:1,ease:'easeOut' }}
+              style={{ height:'100%',background:`linear-gradient(90deg,rgba(245,160,0,0.7),${C.amber})`,borderRadius:3 }}
+            />
+          </div>
+        </motion.div>
+
       </div>
-      <AppTabBar active="streak" />
     </div>
   )
 }
