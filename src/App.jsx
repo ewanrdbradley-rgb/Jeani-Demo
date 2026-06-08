@@ -703,8 +703,8 @@ function TheScience() {
     },
     {
       Icon: IconScience,
-      label: 'Science & Technical Advisory Board',
-      sub: 'Amy Arundale · Jacob Rothman · Dr. Blake Boggess',
+      label: 'Science & Technical Advisors',
+      sub: 'Amy Arundale · Jacob Rothman · Dr. Blake Boggess · Dr. Brinnae Bent',
       detail: 'Methodology consistent with published clinical and sports science research. Built with leading movement scientists to deliver insights athletes and everyday movers can actually trust.',
     },
   ]
