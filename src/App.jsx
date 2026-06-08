@@ -823,9 +823,12 @@ function HowItWorks() {
   return (
     <div style={{ width:'100%',height:'100%',position:'relative',overflow:'hidden',display:'flex',flexDirection:'column' }}>
 
-      {/* Full-bleed background — running photo with blue haze */}
-      <img src="/run-mountain.jpg" alt=""
-        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 45%' }} />
+      {/* Full-bleed background — Ken Burns slow zoom+pan on the mountain runners */}
+      <motion.img src="/run-mountain.jpg" alt=""
+        initial={{ scale:1.08, x:20 }}
+        animate={{ scale:1.18, x:-20 }}
+        transition={{ duration:18, ease:'linear', repeat:Infinity, repeatType:'reverse' }}
+        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 45%',transformOrigin:'center center' }} />
       <div style={{ position:'absolute',inset:0,background:'rgba(17,35,120,0.60)' }} />
       <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(3,5,18,0.55) 0%,rgba(3,5,18,0.72) 100%)' }} />
       <Grain op={0.11} blend="overlay" />
@@ -848,27 +851,26 @@ function HowItWorks() {
               initial={{ opacity:0,y:32 }}
               animate={{ opacity:1,y:0 }}
               transition={{ delay:i*0.18,duration:0.6,ease:[0.22,1,0.36,1] }}
-              style={{ flex:1,background:'rgba(255,255,255,0.07)',backdropFilter:'blur(24px)',borderRadius:26,overflow:'hidden',border:'1px solid rgba(255,255,255,0.12)',display:'flex',flexDirection:'column',position:'relative' }}>
+              style={{ flex:1,background:'rgba(255,255,255,0.07)',backdropFilter:'blur(28px)',borderRadius:26,border:'1px solid rgba(255,255,255,0.13)',display:'flex',flexDirection:'column',padding:'36px 30px 36px',position:'relative',overflow:'hidden' }}>
+              <Grain op={0.06} blend="overlay" />
 
-              {/* Screenshot image — fills top portion */}
-              <div style={{ height:200,overflow:'hidden',position:'relative',flexShrink:0 }}>
-                <img src={s.img} alt={s.title}
-                  style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:s.imgPos }} />
-                {/* Gradient fade into card body */}
-                <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,transparent 45%,rgba(8,12,28,0.96) 100%)' }} />
-                {/* Step number over image */}
-                <div style={{ position:'absolute',top:16,left:18 }}>
-                  <div style={{ background:'rgba(0,0,0,0.45)',backdropFilter:'blur(8px)',border:`1px solid ${s.accent}55`,borderRadius:24,padding:'4px 14px',display:'inline-block' }}>
-                    <span style={{ fontFamily:'HostGrotesk',fontSize:11,fontWeight:700,color:s.accent,letterSpacing:2 }}>{s.num}</span>
-                  </div>
-                </div>
+              {/* Step number */}
+              <div style={{ marginBottom:20 }}>
+                <span style={{ fontFamily:'HostGrotesk',fontSize:11,fontWeight:700,color:s.accent,letterSpacing:2.5,background:`${s.accent}18`,border:`1px solid ${s.accent}40`,borderRadius:20,padding:'5px 14px' }}>
+                  STEP {s.num}
+                </span>
               </div>
 
-              {/* Text body */}
-              <div style={{ padding:'20px 24px 26px',flex:1 }}>
-                <div style={{ fontFamily:'CrimsonPro,serif',fontSize:26,fontWeight:700,color:'#fff',lineHeight:1.1,marginBottom:12 }}>{s.title}</div>
-                <div style={{ fontSize:14,color:'rgba(255,255,255,0.62)',lineHeight:1.72 }}>{s.desc}</div>
+              {/* Large step numeral — decorative */}
+              <div style={{ fontFamily:'CrimsonPro,serif',fontSize:96,fontWeight:700,color:s.accent,lineHeight:0.85,marginBottom:24,opacity:0.18,userSelect:'none',letterSpacing:-4 }}>
+                {s.num}
               </div>
+
+              {/* Title */}
+              <div style={{ fontFamily:'CrimsonPro,serif',fontSize:30,fontWeight:700,color:'#fff',lineHeight:1.1,marginBottom:16 }}>{s.title}</div>
+
+              {/* Description */}
+              <div style={{ fontSize:15,color:'rgba(255,255,255,0.65)',lineHeight:1.75,flex:1 }}>{s.desc}</div>
             </motion.div>
 
             {/* Arrow connector between cards */}
