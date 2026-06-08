@@ -794,49 +794,110 @@ function TheScience() {
 ══════════════════════════════════════════════════════════════════ */
 function HowItWorks() {
   const steps = [
-    { num:'01',title:'Download Jeani',desc:'Available on the App Store. Set up your profile and movement baseline in minutes.',icon:'📱',img:null },
-    { num:'02',title:'Sync Apple Watch',desc:'Jeani connects to Apple Watch and reads your movement in real time — no extra hardware required.',icon:'⌚',img:'/watch-main.png' },
-    { num:'03',title:'Get Your Score',desc:'Every day: Motion score, Spotlight insights, and a personalised goal — so you always know where you stand.',icon:'◆',img:'/screenshots/motion.png' },
+    {
+      num: '01',
+      title: 'Download Jeani',
+      desc: 'Find Jeani on the App Store. Create your profile, set your movement baseline, and you\'re ready to go — takes less than two minutes.',
+      img: '/screenshots/home.png',
+      imgPos: 'top center',
+      accent: C.amber,
+    },
+    {
+      num: '02',
+      title: 'Sync Your Apple Watch',
+      desc: 'Open Jeani on your Apple Watch and start moving. Jeani reads your wrist motion in real time — no chest strap, no footpod, no extra kit.',
+      img: '/watch-main.png',
+      imgPos: 'top center',
+      accent: C.green,
+    },
+    {
+      num: '03',
+      title: 'Get Your Score',
+      desc: 'After every session, Jeani delivers your Motion score, Spotlight muscle insights, and a personalised daily goal. Check in. Know where you stand.',
+      img: '/screenshots/motion.png',
+      imgPos: 'top center',
+      accent: C.sand,
+    },
   ]
-  return (
-    <div style={{ width:'100%',height:'100%',position:'relative',overflow:'hidden',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'36px 56px' }}>
-      {/* Background */}
-      <img src="/bg-court2.png" alt="" style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center',opacity:0.18 }} />
-      <div style={{ position:'absolute',inset:0,background:'linear-gradient(135deg,#05091a 0%,#0a1232 60%,#060e28 100%)' }} />
-      <Grain op={0.12} blend="overlay" />
 
-      <motion.div initial={{ opacity:0,y:-18 }} animate={{ opacity:1,y:0 }} style={{ textAlign:'center',marginBottom:44,position:'relative',zIndex:4 }}>
-        <div style={{ fontFamily:'CrimsonPro,serif',fontSize:50,fontWeight:700,color:'#fff',lineHeight:1 }}>How it works</div>
-        <div style={{ fontSize:14,color:'rgba(255,255,255,0.38)',marginTop:10 }}>From download to daily insight — three steps.</div>
+  return (
+    <div style={{ width:'100%',height:'100%',position:'relative',overflow:'hidden',display:'flex',flexDirection:'column' }}>
+
+      {/* Full-bleed background — running photo with blue haze */}
+      <img src="/run-mountain.jpg" alt=""
+        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 45%' }} />
+      <div style={{ position:'absolute',inset:0,background:'rgba(17,35,120,0.60)' }} />
+      <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(3,5,18,0.55) 0%,rgba(3,5,18,0.72) 100%)' }} />
+      <Grain op={0.11} blend="overlay" />
+
+      {/* Header */}
+      <motion.div initial={{ opacity:0,y:-16 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.55 }}
+        style={{ position:'relative',zIndex:4,textAlign:'center',padding:'36px 56px 0' }}>
+        <div style={{ fontSize:11,color:C.sand,fontFamily:'HostGrotesk',fontWeight:700,letterSpacing:2.5,marginBottom:10,opacity:0.7 }}>THREE STEPS</div>
+        <div style={{ fontFamily:'CrimsonPro,serif',fontSize:50,fontWeight:700,color:'#fff',lineHeight:1,marginBottom:10 }}>How it works</div>
+        <div style={{ fontSize:16,color:'rgba(255,255,255,0.5)',fontFamily:'CrimsonPro,serif',fontStyle:'italic' }}>From download to daily insight.</div>
       </motion.div>
 
-      <div style={{ display:'flex',gap:20,width:'100%',maxWidth:940,position:'relative',zIndex:4 }}>
+      {/* Steps + connectors */}
+      <div style={{ position:'relative',zIndex:4,flex:1,display:'flex',alignItems:'center',padding:'28px 48px 0',gap:0 }}>
         {steps.map((s,i) => (
-          <motion.div key={s.num} initial={{ opacity:0,y:28 }} animate={{ opacity:1,y:0 }} transition={{ delay:i*0.18 }}
-            style={{ flex:1,background:'rgba(255,255,255,0.04)',backdropFilter:'blur(20px)',borderRadius:24,overflow:'hidden',border:'1px solid rgba(255,255,255,0.08)',display:'flex',flexDirection:'column' }}>
-            {/* Image top */}
-            {s.img && (
-              <div style={{ height:140,overflow:'hidden',position:'relative' }}>
-                <img src={s.img} alt="" style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:'top' }} />
-                <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,transparent 40%,rgba(10,15,35,0.95) 100%)' }} />
+          <div key={s.num} style={{ display:'flex',alignItems:'center',flex:1,minWidth:0 }}>
+
+            {/* Card */}
+            <motion.div
+              initial={{ opacity:0,y:32 }}
+              animate={{ opacity:1,y:0 }}
+              transition={{ delay:i*0.18,duration:0.6,ease:[0.22,1,0.36,1] }}
+              style={{ flex:1,background:'rgba(255,255,255,0.07)',backdropFilter:'blur(24px)',borderRadius:26,overflow:'hidden',border:'1px solid rgba(255,255,255,0.12)',display:'flex',flexDirection:'column',position:'relative' }}>
+
+              {/* Screenshot image — fills top portion */}
+              <div style={{ height:200,overflow:'hidden',position:'relative',flexShrink:0 }}>
+                <img src={s.img} alt={s.title}
+                  style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:s.imgPos }} />
+                {/* Gradient fade into card body */}
+                <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,transparent 45%,rgba(8,12,28,0.96) 100%)' }} />
+                {/* Step number over image */}
+                <div style={{ position:'absolute',top:16,left:18 }}>
+                  <div style={{ background:'rgba(0,0,0,0.45)',backdropFilter:'blur(8px)',border:`1px solid ${s.accent}55`,borderRadius:24,padding:'4px 14px',display:'inline-block' }}>
+                    <span style={{ fontFamily:'HostGrotesk',fontSize:11,fontWeight:700,color:s.accent,letterSpacing:2 }}>{s.num}</span>
+                  </div>
+                </div>
               </div>
+
+              {/* Text body */}
+              <div style={{ padding:'20px 24px 26px',flex:1 }}>
+                <div style={{ fontFamily:'CrimsonPro,serif',fontSize:26,fontWeight:700,color:'#fff',lineHeight:1.1,marginBottom:12 }}>{s.title}</div>
+                <div style={{ fontSize:14,color:'rgba(255,255,255,0.62)',lineHeight:1.72 }}>{s.desc}</div>
+              </div>
+            </motion.div>
+
+            {/* Arrow connector between cards */}
+            {i < steps.length - 1 && (
+              <motion.div
+                initial={{ opacity:0,x:-8 }}
+                animate={{ opacity:1,x:0 }}
+                transition={{ delay:i*0.18 + 0.4,duration:0.4 }}
+                style={{ flexShrink:0,padding:'0 14px',display:'flex',flexDirection:'column',alignItems:'center',gap:6 }}>
+                <svg width="32" height="20" viewBox="0 0 32 20" fill="none">
+                  <path d="M0 10 H26 M20 3 L29 10 L20 17" stroke="rgba(255,255,255,0.35)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </motion.div>
             )}
-            {!s.img && (
-              <div style={{ height:140,background:'rgba(17,35,120,0.3)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:52 }}>{s.icon}</div>
-            )}
-            <div style={{ padding:26,flex:1 }}>
-              <div style={{ fontFamily:'CrimsonPro,serif',fontSize:12,color:C.sand,fontWeight:600,marginBottom:8,letterSpacing:1.5 }}>{s.num}</div>
-              <div style={{ fontFamily:'CrimsonPro,serif',fontSize:24,fontWeight:700,color:'#fff',marginBottom:12,lineHeight:1.1 }}>{s.title}</div>
-              <div style={{ fontSize:13,color:'rgba(255,255,255,0.5)',lineHeight:1.75 }}>{s.desc}</div>
-            </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.8 }}
-        style={{ marginTop:36,display:'flex',alignItems:'center',gap:12,position:'relative',zIndex:4 }}>
-        <img src="/watch-screen1.png" alt="" style={{ height:40,borderRadius:8,border:'1px solid rgba(255,255,255,0.1)' }} />
-        <span style={{ fontSize:12,color:'rgba(255,255,255,0.3)' }}>Requires Apple Watch Series 4 or later · iOS 16+</span>
+      {/* Requirements footer */}
+      <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.9 }}
+        style={{ position:'relative',zIndex:4,display:'flex',alignItems:'center',justifyContent:'center',gap:16,padding:'22px 56px 28px' }}>
+        <img src="/watch-main.png" alt="" style={{ height:36,borderRadius:8,border:'1px solid rgba(255,255,255,0.15)',objectFit:'cover',objectPosition:'top' }} />
+        <div style={{ textAlign:'center' }}>
+          <span style={{ fontSize:13,color:'rgba(255,255,255,0.5)',fontFamily:'HostGrotesk' }}>
+            Requires <span style={{ color:'rgba(255,255,255,0.75)',fontWeight:600 }}>Apple Watch Series 6</span> or later
+            &nbsp;·&nbsp;
+            <span style={{ color:'rgba(255,255,255,0.75)',fontWeight:600 }}>iOS 16+</span>
+          </span>
+        </div>
       </motion.div>
     </div>
   )
