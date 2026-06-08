@@ -909,86 +909,123 @@ function HowItWorks() {
    PLANS SECTION
 ══════════════════════════════════════════════════════════════════ */
 function Plans() {
-  const [billing, setBilling] = useState('monthly')
-  const free = ['Motion Score (daily)','Motion Goal tracker','7-day history','Apple Watch sync','Basic insights']
-  const pro = ['Everything in Free','Spotlight — muscle insights','Ask Jeani (AI coach)','90-day history','Streak tracking & milestones','Priority support']
+  const [billing, setBilling] = useState('annual')
+
+  const features = [
+    'Motion Score — daily movement health rating',
+    'Motion Goal — personalised daily target',
+    'Spotlight — surface weak points before you feel them',
+    'Ask Jeani — AI movement coach, always on',
+    'Streak tracking & monthly progress',
+    '90-day movement history',
+    'Apple Watch integration — real-time data',
+  ]
+
+  const price    = billing === 'monthly' ? '$9.99'  : '$99.99'
+  const period   = billing === 'monthly' ? '/month'  : '/year'
+  const subPrice = billing === 'monthly' ? null      : '$8.33/month'
 
   return (
     <div style={{ width:'100%',height:'100%',position:'relative',overflow:'hidden',display:'flex' }}>
-      {/* Left photo panel */}
-      <div style={{ width:'38%',position:'relative',overflow:'hidden' }}>
-        <img src="/bg-court1.png" alt="" style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top' }} />
-        <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(17,35,120,0.3) 0%,rgba(5,10,40,0.8) 100%)' }} />
+
+      {/* ── Left photo panel ── */}
+      <div style={{ width:'40%',position:'relative',overflow:'hidden' }}>
+        <motion.img src="/run-dusk.jpg" alt=""
+          initial={{ scale:1.06 }} animate={{ scale:1.14 }}
+          transition={{ duration:20,ease:'linear',repeat:Infinity,repeatType:'reverse' }}
+          style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 40%' }} />
+        <div style={{ position:'absolute',inset:0,background:'rgba(17,35,120,0.48)' }} />
+        <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(3,5,18,0.1) 0%,rgba(3,5,18,0.85) 100%)' }} />
         <Grain op={0.12} blend="overlay" />
-        <div style={{ position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'flex-start',justifyContent:'flex-end',padding:44,zIndex:2 }}>
-          <img src="/logos/Jeani Wordmark White.png" style={{ height:28,marginBottom:20 }} alt="Jeani" />
-          <div style={{ fontFamily:'CrimsonPro,serif',fontSize:42,fontWeight:700,color:'#fff',lineHeight:1.05,marginBottom:10 }}>Movement<br />is Medicine.</div>
-          <div style={{ fontSize:14,color:'rgba(255,255,255,0.6)',lineHeight:1.65,maxWidth:260 }}>Choose the plan that moves with you. First month always free.</div>
+        <div style={{ position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'flex-start',justifyContent:'flex-end',padding:48,zIndex:2 }}>
+          <img src="/logos/Jeani Wordmark White.png" style={{ height:28,marginBottom:24 }} alt="Jeani" />
+          <div style={{ fontFamily:'CrimsonPro,serif',fontSize:44,fontWeight:700,color:'#fff',lineHeight:1.05,marginBottom:14 }}>
+            Movement<br />is Medicine.
+          </div>
+          <div style={{ fontSize:15,color:'rgba(255,255,255,0.6)',lineHeight:1.7,maxWidth:280 }}>
+            Try Jeani free for two weeks. No commitment. Cancel any time.
+          </div>
         </div>
       </div>
 
-      {/* Right pricing */}
-      <div style={{ flex:1,background:'#f0ebe0',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'40px 48px',position:'relative',overflow:'hidden' }}>
+      {/* ── Right — single subscription card ── */}
+      <div style={{ flex:1,background:'#f0ebe0',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'36px 52px',position:'relative',overflow:'hidden' }}>
         <Grain op={0.05} blend="multiply" />
 
-        {/* Billing toggle */}
-        <div style={{ display:'flex',marginBottom:32,background:'rgba(17,35,120,0.08)',borderRadius:30,padding:4,position:'relative',zIndex:1 }}>
-          {['monthly','annual'].map(b => (
-            <button key={b} onClick={() => setBilling(b)}
-              style={{ padding:'10px 28px',borderRadius:26,border:'none',cursor:'pointer',fontSize:12,fontFamily:'HostGrotesk',fontWeight:600,transition:'all 0.25s',background:billing===b?C.blue:'transparent',color:billing===b?'#fff':'#888' }}>
-              {b === 'monthly' ? 'Monthly' : (
-                <span>Annual <span style={{ marginLeft:6,background:C.green,color:'#000',fontSize:9,fontWeight:700,padding:'2px 7px',borderRadius:10,verticalAlign:'middle' }}>SAVE 17%</span></span>
-              )}
-            </button>
-          ))}
-        </div>
+        <div style={{ width:'100%',maxWidth:480,position:'relative',zIndex:1 }}>
 
-        <div style={{ display:'flex',gap:20,width:'100%',maxWidth:660,alignItems:'flex-start',position:'relative',zIndex:1 }}>
-          {/* Free */}
-          <motion.div initial={{ opacity:0,x:-24 }} animate={{ opacity:1,x:0 }} transition={{ delay:0.15 }}
-            style={{ flex:1,background:'#fff',borderRadius:26,padding:30,border:'1.5px solid rgba(17,35,120,0.1)',boxShadow:'0 4px 30px rgba(0,0,0,0.07)',position:'relative',overflow:'hidden' }}>
-            <Grain op={0.04} blend="multiply" />
-            <div style={{ fontFamily:'CrimsonPro,serif',fontSize:28,fontWeight:700,color:C.blue,marginBottom:6 }}>Free</div>
-            <div style={{ fontSize:44,fontFamily:'CrimsonPro,serif',color:C.blue,fontWeight:700,lineHeight:1,marginBottom:24 }}>$0</div>
-            {free.map(f => (
-              <div key={f} style={{ display:'flex',gap:10,alignItems:'center',marginBottom:12 }}>
-                <div style={{ width:18,height:18,borderRadius:'50%',background:`${C.blue}12`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,color:C.blue,flexShrink:0 }}>✓</div>
-                <span style={{ fontSize:13,color:'#555' }}>{f}</span>
-              </div>
-            ))}
-            <button style={{ width:'100%',marginTop:24,padding:'14px',borderRadius:14,border:`2px solid ${C.blue}`,background:'transparent',color:C.blue,fontSize:14,fontWeight:700,fontFamily:'HostGrotesk',cursor:'pointer' }}>Get Started</button>
+          {/* Trial banner */}
+          <motion.div initial={{ opacity:0,y:-12 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.5 }}
+            style={{ background:C.green,borderRadius:30,padding:'8px 20px',display:'inline-flex',alignItems:'center',gap:8,marginBottom:22 }}>
+            <span style={{ fontSize:13,fontWeight:700,color:'#000',fontFamily:'HostGrotesk' }}>✦ 2-week free trial included</span>
           </motion.div>
 
-          {/* Pro */}
-          <motion.div initial={{ opacity:0,x:24 }} animate={{ opacity:1,x:0 }} transition={{ delay:0.28 }}
-            style={{ flex:1,background:C.blue,borderRadius:26,padding:30,boxShadow:'0 14px 52px rgba(17,35,120,0.35)',position:'relative',overflow:'hidden' }}>
-            <img src="/gradients/Track Grad-08.png" alt="" style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0.25,mixBlendMode:'screen' }} />
-            <Grain op={0.09} blend="overlay" />
-            <div style={{ position:'relative',zIndex:1 }}>
-              <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6 }}>
-                <div style={{ fontFamily:'CrimsonPro,serif',fontSize:28,fontWeight:700,color:C.sand }}>Pro</div>
-                <div style={{ background:C.amber,borderRadius:20,padding:'4px 14px',fontSize:10,color:'#000',fontWeight:700 }}>POPULAR</div>
-              </div>
-              <AnimatePresence mode="wait">
-                <motion.div key={billing} initial={{ opacity:0,y:4 }} animate={{ opacity:1,y:0 }} exit={{ opacity:0,y:-4 }} transition={{ duration:0.2 }}>
-                  <div style={{ fontSize:44,fontFamily:'CrimsonPro,serif',color:C.sand,fontWeight:700,lineHeight:1 }}>
-                    {billing==='monthly'?'$9.99':'$99.99'}
-                    <span style={{ fontSize:15,fontWeight:400,color:'rgba(251,236,207,0.48)' }}>{billing==='monthly'?'/mo':'/yr'}</span>
-                  </div>
-                  <div style={{ fontSize:11,color:'rgba(251,236,207,0.38)',marginBottom:24,marginTop:4 }}>
-                    {billing==='monthly'?'First month free':'$8.33/mo · first month free'}
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-              {pro.map(f => (
-                <div key={f} style={{ display:'flex',gap:10,alignItems:'center',marginBottom:12 }}>
-                  <div style={{ width:18,height:18,borderRadius:'50%',background:`${C.sand}20`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,color:C.sand,flexShrink:0 }}>✓</div>
-                  <span style={{ fontSize:13,color:C.sand }}>{f}</span>
-                </div>
-              ))}
-              <button style={{ width:'100%',marginTop:24,padding:'14px',borderRadius:14,border:'none',background:C.sand,color:C.blue,fontSize:14,fontWeight:700,fontFamily:'HostGrotesk',cursor:'pointer' }}>Go Pro</button>
+          {/* Heading */}
+          <motion.div initial={{ opacity:0,y:12 }} animate={{ opacity:1,y:0 }} transition={{ delay:0.1,duration:0.5 }}>
+            <div style={{ fontFamily:'CrimsonPro,serif',fontSize:42,fontWeight:700,color:'#0a0e20',lineHeight:1,marginBottom:6 }}>
+              Jeani Subscription
+            </div>
+            <div style={{ fontSize:15,color:'#666',marginBottom:28,lineHeight:1.6 }}>
+              Full access to everything. One simple plan.
             </div>
           </motion.div>
+
+          {/* Billing toggle */}
+          <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.2 }}
+            style={{ display:'flex',background:'rgba(17,35,120,0.08)',borderRadius:30,padding:4,width:'fit-content',marginBottom:28 }}>
+            {['monthly','annual'].map(b => (
+              <button key={b} onClick={() => setBilling(b)}
+                style={{ padding:'10px 28px',borderRadius:26,border:'none',cursor:'pointer',fontSize:12,fontFamily:'HostGrotesk',fontWeight:600,transition:'all 0.25s',background:billing===b?C.blue:'transparent',color:billing===b?'#fff':'#888',display:'flex',alignItems:'center',gap:7 }}>
+                {b === 'monthly' ? 'Monthly' : (
+                  <span style={{ display:'flex',alignItems:'center',gap:7 }}>
+                    Annual
+                    <span style={{ background:C.green,color:'#000',fontSize:9,fontWeight:700,padding:'2px 8px',borderRadius:10 }}>SAVE 17%</span>
+                  </span>
+                )}
+              </button>
+            ))}
+          </motion.div>
+
+          {/* Price */}
+          <motion.div initial={{ opacity:0,y:8 }} animate={{ opacity:1,y:0 }} transition={{ delay:0.25 }}
+            style={{ marginBottom:28 }}>
+            <AnimatePresence mode="wait">
+              <motion.div key={billing} initial={{ opacity:0,y:6 }} animate={{ opacity:1,y:0 }} exit={{ opacity:0,y:-6 }} transition={{ duration:0.2 }}>
+                <div style={{ display:'flex',alignItems:'baseline',gap:6 }}>
+                  <span style={{ fontFamily:'CrimsonPro,serif',fontSize:64,fontWeight:700,color:C.blue,lineHeight:1,letterSpacing:-2 }}>{price}</span>
+                  <span style={{ fontSize:18,color:'#888',fontFamily:'HostGrotesk' }}>{period}</span>
+                </div>
+                {subPrice && (
+                  <div style={{ fontSize:13,color:'#888',marginTop:4 }}>That's {subPrice} — billed annually</div>
+                )}
+                <div style={{ fontSize:13,color:C.green,fontWeight:600,marginTop:6,fontFamily:'HostGrotesk' }}>
+                  ✓ First 14 days free — no credit card required to start
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Feature list */}
+          <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.35 }}
+            style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px 20px',marginBottom:28 }}>
+            {features.map((f,i) => (
+              <div key={f} style={{ display:'flex',gap:9,alignItems:'flex-start' }}>
+                <div style={{ width:18,height:18,borderRadius:'50%',background:`${C.blue}14`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,color:C.blue,flexShrink:0,marginTop:1 }}>✓</div>
+                <span style={{ fontSize:13,color:'#444',lineHeight:1.5 }}>{f}</span>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* CTA */}
+          <motion.button
+            initial={{ opacity:0,y:8 }} animate={{ opacity:1,y:0 }} transition={{ delay:0.45 }}
+            style={{ width:'100%',padding:'17px',borderRadius:16,border:'none',background:C.blue,color:'#fff',fontSize:16,fontWeight:700,fontFamily:'HostGrotesk',cursor:'pointer',boxShadow:'0 8px 32px rgba(17,35,120,0.28)',letterSpacing:0.3 }}>
+            Start Free Trial
+          </motion.button>
+          <div style={{ textAlign:'center',fontSize:12,color:'#999',marginTop:12,fontFamily:'HostGrotesk' }}>
+            Cancel any time · No commitment
+          </div>
+
         </div>
       </div>
     </div>
