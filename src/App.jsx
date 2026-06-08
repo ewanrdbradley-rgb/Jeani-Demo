@@ -9,6 +9,22 @@ const Grain = ({ op = 0.1, blend = 'overlay' }) => (
   <div style={{ position:'absolute',inset:0,pointerEvents:'none',zIndex:5,backgroundImage:NOISE,backgroundRepeat:'repeat',backgroundSize:'160px',opacity:op,mixBlendMode:blend }} />
 )
 
+/* ── Video background with photo fallback ────────────────────────── */
+function BgVideo({ src, fallbackImg, pos = 'center center' }) {
+  return (
+    <>
+      {/* Video layer */}
+      <video key={src} autoPlay muted loop playsInline
+        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:pos }}>
+        <source src={src} type="video/mp4" />
+      </video>
+      {/* Photo fallback sits behind (z-index -1) */}
+      <img src={fallbackImg} alt=""
+        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:pos,zIndex:-1 }} />
+    </>
+  )
+}
+
 /* ── BgImage — tries primary, falls back ─────────────────────────── */
 function BgImage({ primary, fallback, pos = 'center center' }) {
   const [useFallback, setUseFallback] = useState(false)
@@ -202,11 +218,6 @@ function StreakScreen() {
 /* ══════════════════════════════════════════════════════════════════
    FEATURES config
 ══════════════════════════════════════════════════════════════════ */
-// Running photos — drop these files into public/ and they'll auto-load:
-// run1.png, run2.png, run3.png, run4.png (the 4 motion-blur running shots)
-// Until then falls back to existing hero images.
-const RUN = ['/run1.png','/run2.png','/run3.png','/run4.png']
-
 const FEATURES = [
   {
     id: 'home',
@@ -214,11 +225,11 @@ const FEATURES = [
     tagline: 'Your daily motion, at a glance.',
     desc: 'Every morning Jeani gives you a Motion score from 0–100, surfaces your top Spotlight insight, and shows you exactly what to focus on today.',
     screenshot: '/screenshots/home.png',
-    bgPhoto: RUN[2],        // two runners by lake — open, bright
+    bgVideo: '/vid-home.mp4',
     bgFallback: '/hero-motion3.jpg',
     bgPos: 'center center',
     accent: C.amber,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.88) 0%,rgba(2,5,20,0.72) 40%,rgba(2,5,20,0.38) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.82) 0%,rgba(2,5,20,0.65) 40%,rgba(2,5,20,0.32) 100%)',
   },
   {
     id: 'motion',
@@ -226,11 +237,11 @@ const FEATURES = [
     tagline: 'Five dimensions of how your body moves.',
     desc: 'Joint Changes, Symmetry, Mobility, Movement Diversity, and Step Volume — combined into a single daily score that tells the real story of how you\'re moving.',
     screenshot: '/screenshots/motion.png',
-    bgPhoto: RUN[3],        // two runners in forest — close, dynamic
+    bgVideo: '/vid-motion.mp4',
     bgFallback: '/bg-court2.png',
     bgPos: 'center center',
     accent: C.amber,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.9) 0%,rgba(2,5,20,0.74) 40%,rgba(2,5,20,0.38) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.84) 0%,rgba(2,5,20,0.68) 40%,rgba(2,5,20,0.34) 100%)',
   },
   {
     id: 'goal',
@@ -238,11 +249,11 @@ const FEATURES = [
     tagline: 'A daily target built around you.',
     desc: 'Your Movement Goal adapts to your score and history. Hit it consistently and your streak builds — miss it and Jeani recalibrates so tomorrow feels achievable.',
     screenshot: '/screenshots/goal-achieved.png',
-    bgPhoto: RUN[1],        // two runners on road — wide, motion blur
+    bgVideo: '/vid-goal.mp4',
     bgFallback: '/hero-motion.jpg',
     bgPos: 'center center',
     accent: C.green,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.9) 0%,rgba(2,5,20,0.74) 40%,rgba(2,5,20,0.38) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.84) 0%,rgba(2,5,20,0.68) 40%,rgba(2,5,20,0.34) 100%)',
   },
   {
     id: 'spotlight',
@@ -250,11 +261,11 @@ const FEATURES = [
     tagline: 'Finds what needs attention before you feel it.',
     desc: 'Jeani analyses your joint data daily and surfaces the one area most at risk — complete with a trend chart, context, and personalised stretch recommendations.',
     screenshot: '/screenshots/spotlight.png',
-    bgPhoto: RUN[0],        // bridge runner — red, high contrast
+    bgVideo: '/vid-spotlight.mp4',
     bgFallback: '/bg-court1.png',
     bgPos: 'center top',
     accent: C.green,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.9) 0%,rgba(2,5,20,0.74) 40%,rgba(2,5,20,0.32) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.84) 0%,rgba(2,5,20,0.68) 40%,rgba(2,5,20,0.28) 100%)',
   },
   {
     id: 'chat',
@@ -262,11 +273,11 @@ const FEATURES = [
     tagline: 'Your personal movement coach, always on.',
     desc: 'Ask anything about your score, your joints, or your training. Jeani answers with context from your actual data — not generic advice.',
     screenshot: '/screenshots/chat.png',
-    bgPhoto: RUN[2],
+    bgVideo: '/vid-intro.mp4',
     bgFallback: '/hero-motion2.png',
-    bgPos: 'center bottom',
+    bgPos: 'center center',
     accent: C.sand,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.94) 0%,rgba(2,5,20,0.78) 40%,rgba(2,5,20,0.4) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.88) 0%,rgba(2,5,20,0.72) 40%,rgba(2,5,20,0.38) 100%)',
   },
   {
     id: 'streak',
@@ -274,11 +285,11 @@ const FEATURES = [
     tagline: 'Consistency is the only metric that compounds.',
     desc: 'Your streak tracks daily goal completion. Eight days. Thirty days. The data shows consistent movers recover faster and stay injury-free longer.',
     screenshot: null,
-    bgPhoto: RUN[1],
+    bgVideo: '/vid-motion.mp4',
     bgFallback: '/hero-motion4.png',
     bgPos: 'center center',
     accent: C.amber,
-    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.9) 0%,rgba(2,5,20,0.74) 40%,rgba(2,5,20,0.38) 100%)',
+    gradOverlay: 'linear-gradient(90deg,rgba(2,5,20,0.84) 0%,rgba(2,5,20,0.68) 40%,rgba(2,5,20,0.34) 100%)',
   },
 ]
 
@@ -294,13 +305,13 @@ function TheApp() {
 
   return (
     <div style={{ width:'100%',height:'100%',position:'relative',overflow:'hidden' }}>
-      {/* Full-bleed background photo — tries running shot first, falls back to hero */}
+      {/* Full-bleed video background — different clip per feature */}
       <AnimatePresence mode="wait">
-        <motion.div key={feat.id + '-bg'} initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.5 }}
+        <motion.div key={feat.id + '-bg'} initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.6 }}
           style={{ position:'absolute',inset:0,zIndex:0 }}>
-          <BgImage primary={feat.bgPhoto} fallback={feat.bgFallback} pos={feat.bgPos} />
+          <BgVideo src={feat.bgVideo} fallbackImg={feat.bgFallback} pos={feat.bgPos} />
           <div style={{ position:'absolute',inset:0,background:feat.gradOverlay }} />
-          <Grain op={0.07} blend="overlay" />
+          <Grain op={0.06} blend="overlay" />
         </motion.div>
       </AnimatePresence>
 
@@ -597,22 +608,24 @@ function Intro({ onDone }) {
   return (
     <motion.div exit={{ opacity:0,transition:{ duration:0.9 } }}
       style={{ position:'fixed',inset:0,zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden' }}>
-      {/* Video background — loops silently */}
+      {/* Intro video — opening segment of the run */}
       <video autoPlay muted loop playsInline
         style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center' }}>
-        <source src="/run-video.mp4" type="video/mp4" />
+        <source src="/vid-intro.mp4" type="video/mp4" />
       </video>
-      {/* Fallback photo if video not supported */}
       <img src="/hero-motion3.jpg" alt=""
-        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center',zIndex:-1 }} />
+        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',zIndex:-1 }} />
       <div style={{ position:'absolute',inset:0,background:'linear-gradient(135deg,rgba(3,5,18,0.72) 0%,rgba(3,5,18,0.48) 50%,rgba(3,5,18,0.68) 100%)' }} />
       <Grain op={0.12} blend="overlay" />
       <Particles />
 
-      {/* Running photo strip — right side */}
+      {/* Right panel — second video segment */}
       <div style={{ position:'absolute',right:0,top:0,bottom:0,width:'32%',overflow:'hidden' }}>
-        <BgImage primary="/run2.png" fallback="/bg-court2.png" pos="center center" />
-        <div style={{ position:'absolute',inset:0,background:'linear-gradient(90deg,rgba(3,5,18,0.98) 0%,rgba(3,5,18,0.25) 100%)' }} />
+        <video autoPlay muted loop playsInline
+          style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:'center' }}>
+          <source src="/vid-spotlight.mp4" type="video/mp4" />
+        </video>
+        <div style={{ position:'absolute',inset:0,background:'linear-gradient(90deg,rgba(3,5,18,0.98) 0%,rgba(3,5,18,0.2) 100%)' }} />
       </div>
 
       <div style={{ position:'relative',zIndex:5,textAlign:'center',maxWidth:580 }}>
