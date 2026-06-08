@@ -218,8 +218,14 @@ function StreakScreen() {
 /* ══════════════════════════════════════════════════════════════════
    FEATURES config
 ══════════════════════════════════════════════════════════════════ */
-// Blue overtone applied consistently across all feature backgrounds
+// Blue overtone — consistent across every feature background
 const BLUE_TINT = 'rgba(17,35,120,0.52)'
+
+// Running photo slots — drop files into public/ to activate automatically.
+// Fallbacks to existing hero images until you save the new shots as files.
+// run-road.jpg   → two runners on road (motion blur, forest + sign)
+// run-lake.jpg   → two runners by lake (open sky)
+// run-forest.jpg → two runners on forest path (close, green)
 
 const FEATURES = [
   {
@@ -229,8 +235,9 @@ const FEATURES = [
     desc: 'Every morning Jeani gives you a Motion score from 0–100, surfaces your top Spotlight insight, and shows you exactly what to focus on today.',
     screenshot: '/screenshots/home.png',
     screenVideo: '/screen-home.mp4',
-    bgPhoto: '/hero-motion3.jpg',
-    bgPos: 'center 40%',
+    bgPhoto: '/run-lake.jpg',       // two runners, open sky — wide, bright
+    bgFallback: '/hero-motion3.jpg',
+    bgPos: 'center 55%',
     accent: C.amber,
   },
   {
@@ -239,7 +246,8 @@ const FEATURES = [
     tagline: 'Five dimensions of how your body moves.',
     desc: 'Joint Changes, Symmetry, Mobility, Movement Diversity, and Step Volume — combined into a single daily score that tells the real story of how you\'re moving.',
     screenshot: '/screenshots/motion.png',
-    bgPhoto: '/bg-court2.png',
+    bgPhoto: '/run-road.jpg',       // two runners on road — wide motion blur
+    bgFallback: '/bg-court2.png',
     bgPos: 'center center',
     accent: C.amber,
   },
@@ -249,8 +257,9 @@ const FEATURES = [
     tagline: 'A daily target built around you.',
     desc: 'Your Movement Goal adapts to your score and history. Hit it consistently and your streak builds — miss it and Jeani recalibrates so tomorrow feels achievable.',
     screenshot: '/screenshots/goal-achieved.png',
-    bgPhoto: '/hero-motion.jpg',
-    bgPos: 'center 35%',
+    bgPhoto: '/run-forest.jpg',     // two runners on forest path — close, green
+    bgFallback: '/hero-motion.jpg',
+    bgPos: 'center 45%',
     accent: C.green,
   },
   {
@@ -259,8 +268,9 @@ const FEATURES = [
     tagline: 'Finds what needs attention before you feel it.',
     desc: 'Jeani analyses your joint data daily and surfaces the one area most at risk — complete with a trend chart, context, and personalised stretch recommendations.',
     screenshot: '/screenshots/spotlight.png',
-    bgPhoto: '/bg-court1.png',
-    bgPos: 'center 30%',
+    bgPhoto: '/run-lake.jpg',       // reuse lake — feels different at spotlight position
+    bgFallback: '/bg-court1.png',
+    bgPos: 'center 40%',
     accent: C.green,
   },
   {
@@ -269,8 +279,9 @@ const FEATURES = [
     tagline: 'Your personal movement coach, always on.',
     desc: 'Ask anything about your score, your joints, or your training. Jeani answers with context from your actual data — not generic advice.',
     screenshot: '/screenshots/chat.png',
-    bgPhoto: '/hero-motion2.png',
-    bgPos: 'center center',
+    bgPhoto: '/run-road.jpg',
+    bgFallback: '/hero-motion2.png',
+    bgPos: 'center 60%',
     accent: C.sand,
   },
   {
@@ -279,7 +290,8 @@ const FEATURES = [
     tagline: 'Consistency is the only metric that compounds.',
     desc: 'Your streak tracks daily goal completion. Eight days. Thirty days. The data shows consistent movers recover faster and stay injury-free longer.',
     screenshot: null,
-    bgPhoto: '/hero-motion4.png',
+    bgPhoto: '/run-forest.jpg',
+    bgFallback: '/hero-motion4.png',
     bgPos: 'center center',
     accent: C.amber,
   },
@@ -301,8 +313,7 @@ function TheApp() {
       <AnimatePresence mode="wait">
         <motion.div key={feat.id + '-bg'} initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.55 }}
           style={{ position:'absolute',inset:0,zIndex:0 }}>
-          <img src={feat.bgPhoto} alt=""
-            style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:feat.bgPos }} />
+          <BgImage primary={feat.bgPhoto} fallback={feat.bgFallback} pos={feat.bgPos} />
           {/* Consistent Jeani blue tint over every photo */}
           <div style={{ position:'absolute',inset:0,background:BLUE_TINT }} />
           {/* Left-to-right dark gradient so left panel text stays readable */}
