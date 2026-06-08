@@ -618,7 +618,7 @@ function Intro({ onDone }) {
 
       {/* Discus video — rotated to landscape, fills full frame */}
       <video autoPlay muted loop playsInline
-        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top' }}>
+        style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 65%' }}>
         <source src="/vid-intro-main.mp4" type="video/mp4" />
       </video>
       {/* Photo fallback */}
