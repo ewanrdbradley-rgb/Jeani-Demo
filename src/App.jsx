@@ -223,6 +223,156 @@ function StreakScreen() {
 }
 
 /* ══════════════════════════════════════════════════════════════════
+   CHAT SCREEN — live animated conversation inside the phone frame
+══════════════════════════════════════════════════════════════════ */
+function ChatScreen() {
+  const CONVERSATION = [
+    { from:'user',  text:'Why is my left hamstring flagged?' },
+    { from:'jeani', text:"Your left hamstring jumped +45 points this week — impressive progress, but rapid gains can sometimes mean your body is compensating for another area. Worth keeping an eye on." },
+    { from:'user',  text:'What should I do today?' },
+    { from:'jeani', text:"Motion score 74 — you're in solid shape and ready to push. A moderate run works great. Just add a hamstring stretch routine after to balance the load." },
+    { from:'user',  text:'How does my symmetry look?' },
+    { from:'jeani', text:"Symmetry is 78 — green. Left and right sides are moving well together. That's one reason you can load with confidence today." },
+  ]
+
+  const [shown, setShown] = useState(0)
+  const [typing, setTyping] = useState(false)
+  const bottomRef = useRef(null)
+
+  useEffect(() => {
+    if (shown >= CONVERSATION.length) {
+      // Restart after a pause
+      const t = setTimeout(() => setShown(0), 4000)
+      return () => clearTimeout(t)
+    }
+    const next = CONVERSATION[shown]
+    const isJeani = next.from === 'jeani'
+    // Show typing indicator for Jeani, then reveal message
+    if (isJeani) {
+      setTyping(true)
+      const t1 = setTimeout(() => {
+        setTyping(false)
+        setShown(s => s + 1)
+      }, 1600)
+      return () => clearTimeout(t1)
+    } else {
+      const delay = shown === 0 ? 800 : 700
+      const t2 = setTimeout(() => setShown(s => s + 1), delay)
+      return () => clearTimeout(t2)
+    }
+  }, [shown])
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [shown, typing])
+
+  return (
+    <div style={{ width:'100%',height:'100%',background:'linear-gradient(180deg,#080e28 0%,#050a1c 100%)',display:'flex',flexDirection:'column',position:'relative' }}>
+
+      {/* Status bar */}
+      <div style={{ height:48,flexShrink:0 }} />
+
+      {/* Header */}
+      <div style={{ padding:'0 16px 12px',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'flex',alignItems:'center',gap:11,flexShrink:0 }}>
+        <div style={{ width:40,height:40,borderRadius:'50%',background:`linear-gradient(135deg,${C.blue},#2040c0)`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}>
+          <img src="/logos/Jeani J White.png" style={{ height:20 }} alt="J" />
+        </div>
+        <div style={{ flex:1 }}>
+          <div style={{ fontSize:15,color:'#fff',fontWeight:700,fontFamily:'CrimsonPro,serif' }}>Ask Jeani</div>
+          <div style={{ display:'flex',alignItems:'center',gap:5,marginTop:1 }}>
+            <div style={{ width:6,height:6,borderRadius:'50%',background:C.green,boxShadow:`0 0 7px ${C.green}` }} />
+            <span style={{ fontSize:10,color:'rgba(255,255,255,0.45)',fontFamily:'HostGrotesk' }}>
+              {typing ? 'Typing…' : 'Active now'}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div style={{ flex:1,overflowY:'auto',padding:'14px 14px 8px',display:'flex',flexDirection:'column',gap:10 }}>
+
+        {/* Context chip */}
+        <div style={{ textAlign:'center',marginBottom:4 }}>
+          <span style={{ fontSize:9,color:'rgba(255,255,255,0.28)',background:'rgba(255,255,255,0.06)',borderRadius:20,padding:'4px 12px',fontFamily:'HostGrotesk' }}>
+            Based on your motion data · Jun 7
+          </span>
+        </div>
+
+        {CONVERSATION.slice(0, shown).map((m, i) => (
+          <motion.div key={i}
+            initial={{ opacity:0, y:10, scale:0.97 }}
+            animate={{ opacity:1, y:0, scale:1 }}
+            transition={{ duration:0.28, ease:'easeOut' }}
+            style={{
+              alignSelf: m.from === 'user' ? 'flex-end' : 'flex-start',
+              maxWidth:'82%',
+              display:'flex',
+              flexDirection: m.from === 'jeani' ? 'row' : 'row-reverse',
+              alignItems:'flex-end',
+              gap:7,
+            }}>
+            {m.from === 'jeani' && (
+              <div style={{ width:26,height:26,borderRadius:'50%',background:`linear-gradient(135deg,${C.blue},#2040c0)`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginBottom:1 }}>
+                <img src="/logos/Jeani J White.png" style={{ height:13 }} alt="J" />
+              </div>
+            )}
+            <div style={{
+              background: m.from === 'user'
+                ? `linear-gradient(135deg,${C.blue},#1a35a0)`
+                : 'rgba(255,255,255,0.08)',
+              backdropFilter:'blur(8px)',
+              border: `1px solid ${m.from === 'user' ? 'rgba(40,70,200,0.5)' : 'rgba(255,255,255,0.09)'}`,
+              borderRadius: m.from === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+              padding:'10px 13px',
+              fontSize:12,
+              color:'#fff',
+              lineHeight:1.65,
+            }}>
+              {m.text}
+            </div>
+          </motion.div>
+        ))}
+
+        {/* Typing indicator */}
+        {typing && (
+          <motion.div initial={{ opacity:0,y:6 }} animate={{ opacity:1,y:0 }}
+            style={{ alignSelf:'flex-start',display:'flex',alignItems:'flex-end',gap:7 }}>
+            <div style={{ width:26,height:26,borderRadius:'50%',background:`linear-gradient(135deg,${C.blue},#2040c0)`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}>
+              <img src="/logos/Jeani J White.png" style={{ height:13 }} alt="J" />
+            </div>
+            <div style={{ background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.09)',borderRadius:'18px 18px 18px 4px',padding:'12px 16px' }}>
+              <div style={{ display:'flex',gap:5,alignItems:'center' }}>
+                {[0,1,2].map(i => (
+                  <motion.div key={i}
+                    animate={{ y:[0,-5,0] }}
+                    transition={{ duration:0.55,repeat:Infinity,delay:i*0.15,ease:'easeInOut' }}
+                    style={{ width:6,height:6,borderRadius:'50%',background:'rgba(255,255,255,0.45)' }}
+                  />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input bar */}
+      <div style={{ padding:'10px 14px 14px',flexShrink:0 }}>
+        <div style={{ background:'rgba(255,255,255,0.07)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:28,padding:'10px 14px',display:'flex',alignItems:'center',gap:10 }}>
+          <span style={{ flex:1,fontSize:12,color:'rgba(255,255,255,0.28)',fontFamily:'HostGrotesk' }}>Ask anything about your movement…</span>
+          <div style={{ width:30,height:30,borderRadius:'50%',background:C.sand,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}>
+            <span style={{ fontSize:13,color:C.blue,fontWeight:700,lineHeight:1 }}>↑</span>
+          </div>
+        </div>
+      </div>
+
+      <AppTabBar active="chat" />
+    </div>
+  )
+}
+
+/* ══════════════════════════════════════════════════════════════════
    FEATURES config
 ══════════════════════════════════════════════════════════════════ */
 // Blue overtone — consistent across every feature background
@@ -287,8 +437,8 @@ const FEATURES = [
     label: 'Ask Jeani',
     tagline: 'Your personal movement coach, always on.',
     desc: 'Ask anything about your score, your joints, or your training. Jeani answers with context from your actual data — not generic advice.',
-    screenshot: '/screenshots/chat.png',
-    bgPhoto: '/run-bridge.jpg',    // bridge runners, green trees
+    screenshot: null,              // uses live ChatScreen component
+    bgPhoto: '/run-bridge.jpg',
     bgFallback: '/run-bridge.jpg',
     bgPos: 'center 40%',
     accent: C.sand,
@@ -306,7 +456,7 @@ const FEATURES = [
   },
 ]
 
-const FALLBACK_SCREENS = { goal: GoalScreen, streak: StreakScreen }
+const FALLBACK_SCREENS = { goal: GoalScreen, streak: StreakScreen, chat: ChatScreen }
 
 /* ══════════════════════════════════════════════════════════════════
    THE APP SECTION
