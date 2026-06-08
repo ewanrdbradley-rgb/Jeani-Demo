@@ -658,21 +658,55 @@ function TheApp() {
    THE SCIENCE SECTION
 ══════════════════════════════════════════════════════════════════ */
 function TheScience() {
+  // SVG icons for each pillar
+  const IconMovement = () => (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke={C.sand} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {/* Running figure */}
+      <circle cx="14" cy="3.5" r="1.5" fill={C.sand} stroke="none" />
+      <path d="M12 6.5l-2 3.5 2.5 2-1.5 4" />
+      <path d="M10 10l-2.5 1.5" />
+      <path d="M11 16l-1.5 2.5" />
+      <path d="M11 16l2 2" />
+      {/* Joint dots */}
+      <circle cx="10" cy="10" r="0.8" fill={C.sand} stroke="none" />
+      <circle cx="12" cy="13" r="0.8" fill={C.sand} stroke="none" />
+    </svg>
+  )
+
+  const IconApple = () => (
+    <svg viewBox="0 0 24 24" width="24" height="24" fill={C.sand}>
+      {/* Apple logo path */}
+      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+    </svg>
+  )
+
+  const IconScience = () => (
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke={C.sand} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {/* DNA helix */}
+      <path d="M7 3c2 2 8 2 10 4s-2 6-4 8-8 2-10 4" />
+      <path d="M17 3c-2 2-8 2-10 4s2 6 4 8 8 2 10 4" />
+      <line x1="7.5" y1="6" x2="16.5" y2="6" strokeOpacity="0.5" />
+      <line x1="5.5" y1="10" x2="18.5" y2="10" strokeOpacity="0.5" />
+      <line x1="7.5" y1="14" x2="16.5" y2="14" strokeOpacity="0.5" />
+      <line x1="5.5" y1="18" x2="18.5" y2="18" strokeOpacity="0.5" />
+    </svg>
+  )
+
   const pillars = [
     {
-      icon: '⬡',
+      Icon: IconMovement,
       label: '5 Movement Dimensions',
       sub: 'Joint Changes · Symmetry · Mobility · Movement Diversity · Step Volume',
       detail: 'Every session, Jeani derives six joint-specific estimates — hip, knee, and ankle bilaterally — from your wrist accelerometer. Statistically validated against published clinical research.',
     },
     {
-      icon: '⌚',
+      Icon: IconApple,
       label: 'Apple Watch Integration',
       sub: 'One sensor. Six joint estimates. Every session.',
       detail: 'Triaxial accelerometry captures motion across three axes during walking or running. No extra hardware. Compatible with any wrist-worn accelerometer, measured in real-world conditions.',
     },
     {
-      icon: '◈',
+      Icon: IconScience,
       label: 'Science & Technical Advisory Board',
       sub: 'Amy Arendelle · Jacob Rothman · Dr. Blake Boggess',
       detail: 'Methodology consistent with published clinical and sports science research. Built with leading movement scientists to deliver insights athletes and everyday movers can actually trust.',
@@ -732,8 +766,8 @@ function TheScience() {
                 <Grain op={0.08} blend="overlay" />
 
                 {/* Icon */}
-                <div style={{ width:50,height:50,borderRadius:16,background:'rgba(251,236,207,0.1)',border:'1px solid rgba(251,236,207,0.18)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,flexShrink:0 }}>
-                  {p.icon}
+                <div style={{ width:50,height:50,borderRadius:16,background:'rgba(251,236,207,0.1)',border:'1px solid rgba(251,236,207,0.18)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}>
+                  <p.Icon />
                 </div>
 
                 <div style={{ position:'relative',zIndex:1,flex:1 }}>
