@@ -1082,7 +1082,7 @@ function Intro({ onDone }) {
         </motion.div>
         <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:1.1,duration:0.7 }}
           style={{ fontSize:12,color:'rgba(255,255,255,0.4)',marginTop:10,letterSpacing:1.5 }}>
-          Starting the movement · 10.20.2025
+          Starting the movement · 10.20.2026
         </motion.div>
         <motion.button
           initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} transition={{ delay:2,duration:0.5 }}
