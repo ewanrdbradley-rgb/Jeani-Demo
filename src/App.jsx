@@ -963,7 +963,7 @@ function Plans() {
           {/* Heading */}
           <motion.div initial={{ opacity:0,y:12 }} animate={{ opacity:1,y:0 }} transition={{ delay:0.1,duration:0.5 }}>
             <div style={{ fontFamily:'CrimsonPro,serif',fontSize:42,fontWeight:700,color:'#0a0e20',lineHeight:1,marginBottom:6 }}>
-              Jeani Subscription
+              Join the movement with Jeani
             </div>
             <div style={{ fontSize:15,color:'#666',marginBottom:28,lineHeight:1.6 }}>
               Full access to everything. One simple plan.
