@@ -812,7 +812,7 @@ function HowItWorks() {
     {
       num: '03',
       title: 'Get Your Score',
-      desc: 'After every session, Jeani delivers your Motion score, Spotlight muscle insights, and a personalised daily goal. Check in. Know where you stand.',
+      desc: 'After every session and every day, Jeani delivers your Motion score, Spotlight muscle insights, and a personalised Movement Goal — so you always know exactly where you stand.',
       img: '/screenshots/motion.png',
       imgPos: 'top center',
       accent: C.sand,
