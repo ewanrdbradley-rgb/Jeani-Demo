@@ -999,7 +999,7 @@ function Plans() {
                   <div style={{ fontSize:13,color:'#888',marginTop:4 }}>That's {subPrice} — billed annually</div>
                 )}
                 <div style={{ fontSize:13,color:C.green,fontWeight:600,marginTop:6,fontFamily:'HostGrotesk' }}>
-                  ✓ First 14 days free — no credit card required to start
+                  ✓ First fourteen days free
                 </div>
               </motion.div>
             </AnimatePresence>
