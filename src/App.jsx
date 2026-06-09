@@ -473,7 +473,6 @@ function ChatScreen() {
         </div>
       </div>
 
-      <AppTabBar active="chat" />
     </div>
   )
 }
