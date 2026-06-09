@@ -1047,7 +1047,7 @@ function Particles() {
 }
 
 function Intro({ onDone }) {
-  useEffect(() => { const t = setTimeout(onDone,4500); return () => clearTimeout(t) },[onDone])
+  // No auto-advance — user must press EXPLORE
   return (
     <motion.div exit={{ opacity:0,transition:{ duration:0.9 } }}
       style={{ position:'fixed',inset:0,zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden' }}>
