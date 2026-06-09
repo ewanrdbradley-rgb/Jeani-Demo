@@ -149,7 +149,7 @@ function GoalScreen() {
       <div style={{ position:'absolute',top:'10%',left:'50%',transform:'translateX(-50%)',width:260,height:260,borderRadius:'50%',background:'radial-gradient(circle,rgba(30,60,180,0.4) 0%,transparent 70%)',filter:'blur(35px)' }} />
       <div style={{ position:'relative',zIndex:2,padding:'48px 16px 84px',display:'flex',flexDirection:'column',gap:14,flex:1 }}>
         <div style={{ textAlign:'center',marginBottom:4 }}>
-          <div style={{ fontSize:9,color:'rgba(255,255,255,0.28)',letterSpacing:3 }}>MOTION GOAL</div>
+          <div style={{ fontSize:9,color:'rgba(255,255,255,0.28)',letterSpacing:3 }}>MOVEMENT GOAL</div>
           <div style={{ fontSize:24,color:'#fff',fontWeight:700 }}>Today</div>
         </div>
         <div style={{ flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center' }}>
@@ -518,7 +518,7 @@ const FEATURES = [
   },
   {
     id: 'goal',
-    label: 'Motion Goal',
+    label: 'Movement Goal',
     tagline: 'A daily target built around you.',
     desc: 'Your Movement Goal adapts to your score and history. Hit it consistently and your streak builds — miss it and Jeani recalibrates so tomorrow feels achievable.',
     screenshot: '/screenshots/goal-achieved.png',
@@ -913,7 +913,7 @@ function Plans() {
 
   const features = [
     'Motion Score — daily movement health rating',
-    'Motion Goal — personalised daily target',
+    'Movement Goal — personalised daily target',
     'Spotlight — surface weak points before you feel them',
     'Ask Jeani — AI movement coach, always on',
     'Streak tracking & monthly progress',
