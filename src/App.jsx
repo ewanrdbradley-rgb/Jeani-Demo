@@ -4,6 +4,17 @@ import './index.css'
 
 const C = { blue: '#112378', sand: '#fbeccf', amber: '#F5A000', green: '#00E87B' }
 
+/* ── Mobile detection hook ───────────────────────────────────────── */
+function useIsMobile() {
+  const [mobile, setMobile] = useState(() => window.innerWidth < 768)
+  useEffect(() => {
+    const fn = () => setMobile(window.innerWidth < 768)
+    window.addEventListener('resize', fn)
+    return () => window.removeEventListener('resize', fn)
+  }, [])
+  return mobile
+}
+
 const NOISE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")`
 const Grain = ({ op = 0.1, blend = 'overlay' }) => (
   <div style={{ position:'absolute',inset:0,pointerEvents:'none',zIndex:5,backgroundImage:NOISE,backgroundRepeat:'repeat',backgroundSize:'160px',opacity:op,mixBlendMode:blend }} />
@@ -51,7 +62,34 @@ const TABS = [
   { id:'plans',   label:'PLANS',        icon:'◈' },
 ]
 
-function TopNav({ active, onChange, onReset }) {
+function TopNav({ active, onChange, onReset, mobile }) {
+  if (mobile) {
+    // Mobile: logo bar at top + bottom tab bar
+    return (
+      <>
+        {/* Mobile top bar — logo only */}
+        <div style={{ height:52,background:'rgba(3,5,18,0.95)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.08)',display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 20px',flexShrink:0,position:'relative',zIndex:50 }}>
+          <img src="/logos/Jeani Wordmark White.png" style={{ height:20,opacity:0.95 }} alt="Jeani" />
+          <button onClick={onReset}
+            style={{ width:30,height:30,borderRadius:'50%',background:'rgba(255,255,255,0.07)',border:'1px solid rgba(255,255,255,0.14)',color:'rgba(255,255,255,0.45)',fontSize:14,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center' }}>✕</button>
+        </div>
+        {/* Mobile bottom tab bar */}
+        <div style={{ position:'fixed',bottom:0,left:0,right:0,height:64,background:'rgba(3,5,18,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.08)',display:'flex',zIndex:100 }}>
+          {TABS.map(t => {
+            const on = t.id === active
+            return (
+              <button key={t.id} onClick={() => onChange(t.id)}
+                style={{ flex:1,border:'none',cursor:'pointer',background:'transparent',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:3,borderTop:on?`2px solid ${C.sand}`:'2px solid transparent',transition:'all 0.2s' }}>
+                <span style={{ fontSize:16 }}>{t.icon}</span>
+                <span style={{ fontSize:9,fontFamily:'HostGrotesk',fontWeight:on?700:400,color:on?C.sand:'rgba(255,255,255,0.38)',letterSpacing:1 }}>{t.label}</span>
+              </button>
+            )
+          })}
+        </div>
+      </>
+    )
+  }
+  // Desktop
   return (
     <div style={{ height:62,background:'rgba(3,5,18,0.92)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.08)',display:'flex',alignItems:'center',padding:'0 28px',gap:0,flexShrink:0,position:'relative',zIndex:50 }}>
       <img src="/logos/Jeani Wordmark White.png" style={{ height:22,marginRight:48,opacity:0.95,flexShrink:0 }} alt="Jeani" />
@@ -566,31 +604,102 @@ const FALLBACK_SCREENS = { goal: GoalScreen, streak: StreakScreen, chat: ChatScr
 /* ══════════════════════════════════════════════════════════════════
    THE APP SECTION
 ══════════════════════════════════════════════════════════════════ */
+function PhoneContent({ feat, FallbackScreen }) {
+  return feat.screenVideo ? (
+    <video key={feat.screenVideo} autoPlay muted loop playsInline
+      style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:'top',display:'block' }}>
+      <source src={feat.screenVideo} type="video/mp4" />
+    </video>
+  ) : feat.screenshot ? (
+    <ScreenShot src={feat.screenshot}>{FallbackScreen && <FallbackScreen />}</ScreenShot>
+  ) : FallbackScreen ? <FallbackScreen /> : null
+}
+
 function TheApp() {
   const [idx, setIdx] = useState(0)
+  const mobile = useIsMobile()
   const feat = FEATURES[idx]
   const FallbackScreen = FALLBACK_SCREENS[feat.id]
 
+  if (mobile) {
+    return (
+      <div style={{ minHeight:'100%',position:'relative',background:'#020810',paddingBottom:80 }}>
+        {/* Full-bleed bg */}
+        <div style={{ position:'fixed',inset:0,zIndex:0,pointerEvents:'none' }}>
+          <BgImage primary={feat.bgPhoto} fallback={feat.bgFallback} pos={feat.bgPos} />
+          <div style={{ position:'absolute',inset:0,background:BLUE_TINT }} />
+          <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(2,5,18,0.65) 0%,rgba(2,5,18,0.5) 100%)' }} />
+          <Grain op={0.13} blend="overlay" />
+        </div>
+
+        <div style={{ position:'relative',zIndex:1,padding:'20px 20px 0' }}>
+          {/* Feature label */}
+          <AnimatePresence mode="wait">
+            <motion.div key={feat.id} initial={{ opacity:0,y:-8 }} animate={{ opacity:1,y:0 }} exit={{ opacity:0 }} transition={{ duration:0.3 }}
+              style={{ marginBottom:16 }}>
+              <div style={{ fontSize:9,color:feat.accent,letterSpacing:3,fontFamily:'HostGrotesk',fontWeight:600,marginBottom:6 }}>JEANI APP</div>
+              <div style={{ fontFamily:'CrimsonPro,serif',fontSize:30,fontWeight:700,color:'#fff',lineHeight:1.1 }}>{feat.label}</div>
+              <div style={{ fontFamily:'CrimsonPro,serif',fontStyle:'italic',fontSize:14,color:'rgba(255,255,255,0.55)',marginTop:6,lineHeight:1.5 }}>{feat.tagline}</div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Horizontal scrollable feature pills */}
+          <div style={{ display:'flex',gap:8,overflowX:'auto',paddingBottom:12,WebkitOverflowScrolling:'touch',msOverflowStyle:'none',scrollbarWidth:'none' }}>
+            {FEATURES.map((f,i) => (
+              <button key={f.id} onClick={() => setIdx(i)}
+                style={{ flexShrink:0,padding:'7px 14px',borderRadius:20,border:`1px solid ${i===idx?feat.accent:'rgba(255,255,255,0.2)'}`,background:i===idx?`${feat.accent}22`:'rgba(255,255,255,0.06)',color:i===idx?feat.accent:'rgba(255,255,255,0.55)',fontSize:11,fontFamily:'HostGrotesk',fontWeight:i===idx?700:400,cursor:'pointer',whiteSpace:'nowrap',transition:'all 0.2s' }}>
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Phone — scaled to fit mobile width */}
+          <div style={{ display:'flex',justifyContent:'center',marginTop:8 }}>
+            <AnimatePresence mode="wait">
+              <motion.div key={feat.id}
+                initial={{ y:30,opacity:0 }} animate={{ y:0,opacity:1 }} exit={{ y:-20,opacity:0 }}
+                transition={{ duration:0.5,ease:[0.22,1,0.36,1] }}
+                style={{ width:'min(260px, 80vw)',aspectRatio:'9/19.5',borderRadius:40,background:'#06080f',position:'relative',
+                  boxShadow:'0 40px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.14)' }}>
+                {/* Buttons */}
+                <div style={{ position:'absolute',left:-2,top:'18%',width:2,height:24,background:'rgba(255,255,255,0.15)',borderRadius:'2px 0 0 2px' }} />
+                <div style={{ position:'absolute',right:-2,top:'25%',width:2,height:36,background:'rgba(255,255,255,0.15)',borderRadius:'0 2px 2px 0' }} />
+                {/* Screen */}
+                <div style={{ position:'absolute',inset:7,borderRadius:34,overflow:'hidden',background:'#000' }}>
+                  <div style={{ position:'absolute',top:8,left:'50%',transform:'translateX(-50%)',width:80,height:22,background:'#000',borderRadius:14,zIndex:30 }} />
+                  <PhoneContent feat={feat} FallbackScreen={FallbackScreen} />
+                </div>
+                {/* Reflection */}
+                <div style={{ position:'absolute',inset:7,borderRadius:34,background:'linear-gradient(135deg,rgba(255,255,255,0.06) 0%,transparent 45%)',pointerEvents:'none',zIndex:10 }} />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Description */}
+          <AnimatePresence mode="wait">
+            <motion.p key={feat.id+'d'} initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.3 }}
+              style={{ fontSize:13,color:'rgba(255,255,255,0.5)',lineHeight:1.7,marginTop:16,textAlign:'center' }}>
+              {feat.desc}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Desktop layout ──
   return (
     <div style={{ width:'100%',height:'100%',position:'relative',overflow:'hidden' }}>
-      {/* Still image background — blue overtone + grain */}
       <AnimatePresence mode="wait">
         <motion.div key={feat.id + '-bg'} initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.55 }}
           style={{ position:'absolute',inset:0,zIndex:0 }}>
           <BgImage primary={feat.bgPhoto} fallback={feat.bgFallback} pos={feat.bgPos} />
-          {/* Consistent Jeani blue tint over every photo */}
           <div style={{ position:'absolute',inset:0,background:BLUE_TINT }} />
-          {/* Left-to-right dark gradient so left panel text stays readable */}
           <div style={{ position:'absolute',inset:0,background:'linear-gradient(90deg,rgba(2,5,18,0.78) 0%,rgba(2,5,18,0.45) 35%,rgba(2,5,18,0.15) 100%)' }} />
-          {/* Grain */}
           <Grain op={0.13} blend="overlay" />
         </motion.div>
       </AnimatePresence>
-
-      {/* ─ Left info panel ─ */}
       <div style={{ position:'absolute',left:0,top:0,bottom:0,width:300,zIndex:10,display:'flex',flexDirection:'column',justifyContent:'center',padding:'0 0 0 36px' }}>
-
-        {/* Feature text */}
         <AnimatePresence mode="wait">
           <motion.div key={feat.id} initial={{ opacity:0,x:-16 }} animate={{ opacity:1,x:0 }} exit={{ opacity:0,x:16 }} transition={{ duration:0.38 }}
             style={{ marginBottom:36 }}>
@@ -600,8 +709,6 @@ function TheApp() {
             <div style={{ fontSize:13,color:'rgba(255,255,255,0.42)',marginTop:14,lineHeight:1.68,maxWidth:260 }}>{feat.desc}</div>
           </motion.div>
         </AnimatePresence>
-
-        {/* Feature nav list */}
         <div style={{ display:'flex',flexDirection:'column',gap:2 }}>
           {FEATURES.map((f,i) => (
             <button key={f.id} onClick={() => setIdx(i)}
@@ -612,37 +719,17 @@ function TheApp() {
           ))}
         </div>
       </div>
-
-      {/* ─ Phone ─ */}
       <div style={{ position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',zIndex:8,paddingLeft:300 }}>
         <AnimatePresence mode="wait">
-          <Phone key={feat.id} id={feat.id}>
-            {feat.screenVideo ? (
-              /* Live screen recording plays inside the phone frame */
-              <video key={feat.screenVideo} autoPlay muted loop playsInline
-                style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:'top',display:'block' }}>
-                <source src={feat.screenVideo} type="video/mp4" />
-              </video>
-            ) : feat.screenshot ? (
-              <ScreenShot src={feat.screenshot}>
-                {FallbackScreen && <FallbackScreen />}
-              </ScreenShot>
-            ) : FallbackScreen ? (
-              <FallbackScreen />
-            ) : null}
-          </Phone>
+          <Phone key={feat.id} id={feat.id}><PhoneContent feat={feat} FallbackScreen={FallbackScreen} /></Phone>
         </AnimatePresence>
       </div>
-
-      {/* ─ Prev / Next arrows ─ */}
       <div style={{ position:'absolute',bottom:24,right:24,display:'flex',gap:10,zIndex:20 }}>
         <button onClick={() => setIdx(i => Math.max(0,i-1))} disabled={idx===0}
           style={{ width:44,height:44,borderRadius:'50%',background:idx===0?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.1)',border:'1px solid rgba(255,255,255,0.18)',color:idx===0?'rgba(255,255,255,0.2)':'#fff',fontSize:22,cursor:idx===0?'default':'pointer',display:'flex',alignItems:'center',justifyContent:'center',backdropFilter:'blur(10px)',transition:'all 0.2s' }}>‹</button>
         <button onClick={() => setIdx(i => Math.min(FEATURES.length-1,i+1))} disabled={idx===FEATURES.length-1}
           style={{ width:44,height:44,borderRadius:'50%',background:idx===FEATURES.length-1?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.1)',border:'1px solid rgba(255,255,255,0.18)',color:idx===FEATURES.length-1?'rgba(255,255,255,0.2)':'#fff',fontSize:22,cursor:idx===FEATURES.length-1?'default':'pointer',display:'flex',alignItems:'center',justifyContent:'center',backdropFilter:'blur(10px)',transition:'all 0.2s' }}>›</button>
       </div>
-
-      {/* ─ Dot indicators ─ */}
       <div style={{ position:'absolute',bottom:32,left:'50%',transform:'translateX(-50%)',display:'flex',gap:8,zIndex:20,paddingLeft:300 }}>
         {FEATURES.map((_,i) => (
           <button key={i} onClick={() => setIdx(i)}
@@ -657,6 +744,7 @@ function TheApp() {
    THE SCIENCE SECTION
 ══════════════════════════════════════════════════════════════════ */
 function TheScience() {
+  const mobile = useIsMobile()
   // SVG icons — large, fills the badge
   const IconMovement = () => (
     <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke={C.sand} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -707,6 +795,40 @@ function TheScience() {
       detail: 'Methodology consistent with published clinical and sports science research. Built with leading movement scientists to deliver insights athletes and everyday movers can actually trust.',
     },
   ]
+
+  if (mobile) return (
+    <div style={{ background:'#f0ebe0',minHeight:'100%',paddingBottom:20 }}>
+      <Grain op={0.05} blend="multiply" />
+      {/* Video banner */}
+      <div style={{ position:'relative',height:200,overflow:'hidden' }}>
+        <video autoPlay muted loop playsInline style={{ width:'100%',height:'100%',objectFit:'cover' }}><source src="/vid-science.mp4" type="video/mp4" /></video>
+        <div style={{ position:'absolute',inset:0,background:'rgba(17,35,120,0.5)' }} />
+        <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,transparent 30%,rgba(3,5,18,0.92) 100%)' }} />
+        <div style={{ position:'absolute',bottom:20,left:20,right:20 }}>
+          <img src="/logos/Jeani Wordmark White.png" style={{ height:22,marginBottom:10 }} alt="Jeani" />
+          <div style={{ fontFamily:'CrimsonPro,serif',fontSize:22,fontWeight:700,color:'#fff',lineHeight:1.1 }}>From Your Joints, To Your Wrist.</div>
+        </div>
+      </div>
+      <div style={{ padding:'20px 20px 0' }}>
+        <div style={{ fontSize:10,color:C.blue,fontFamily:'HostGrotesk',fontWeight:700,letterSpacing:2,marginBottom:8 }}>THE SCIENCE BEHIND JEANI</div>
+        <div style={{ fontFamily:'CrimsonPro,serif',fontSize:26,fontWeight:700,color:'#0a0e20',lineHeight:1.1,marginBottom:10 }}>Real-world movement intelligence. Clinically grounded.</div>
+        <div style={{ fontSize:14,color:'#666',lineHeight:1.65,marginBottom:20 }}>Triaxial accelerometry and gait proxy extraction — six bilateral joint estimates per session. No lab. No extra hardware.</div>
+        <div style={{ display:'flex',flexDirection:'column',gap:12 }}>
+          {pillars.map((p,i) => (
+            <motion.div key={p.label} initial={{ opacity:0,x:16 }} animate={{ opacity:1,x:0 }} transition={{ delay:i*0.1 }}
+              style={{ background:C.blue,borderRadius:16,padding:'16px 18px',display:'flex',gap:16,alignItems:'center',position:'relative',overflow:'hidden' }}>
+              <Grain op={0.08} blend="overlay" />
+              <div style={{ width:52,height:52,borderRadius:14,background:'rgba(251,236,207,0.1)',border:'1px solid rgba(251,236,207,0.18)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}><p.Icon /></div>
+              <div style={{ position:'relative',zIndex:1 }}>
+                <div style={{ fontSize:15,color:C.sand,fontWeight:700,fontFamily:'CrimsonPro,serif',marginBottom:3 }}>{p.label}</div>
+                <div style={{ fontSize:11,color:'rgba(251,236,207,0.5)',fontFamily:'HostGrotesk' }}>{p.sub}</div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <div style={{ width:'100%',height:'100%',display:'flex',flexDirection:'column',position:'relative',overflow:'hidden',background:'#f0ebe0' }}>
@@ -792,32 +914,42 @@ function TheScience() {
    HOW IT WORKS SECTION
 ══════════════════════════════════════════════════════════════════ */
 function HowItWorks() {
+  const mobile = useIsMobile()
   const steps = [
-    {
-      num: '01',
-      title: 'Download Jeani',
-      desc: 'Find Jeani on the App Store. Create your profile, set your movement baseline, and you\'re ready to go — takes less than two minutes.',
-      img: '/screenshots/home.png',
-      imgPos: 'top center',
-      accent: C.amber,
-    },
-    {
-      num: '02',
-      title: 'Sync Your Apple Watch',
-      desc: 'Open Jeani on your Apple Watch and start moving. Jeani reads your wrist motion in real time — no chest strap, no footpod, no extra kit.',
-      img: '/watch-main.png',
-      imgPos: 'top center',
-      accent: C.green,
-    },
-    {
-      num: '03',
-      title: 'Get Your Score',
-      desc: 'After every session and every day, Jeani delivers your Motion score, Spotlight muscle insights, and a personalised Movement Goal — so you always know exactly where you stand.',
-      img: '/screenshots/motion.png',
-      imgPos: 'top center',
-      accent: C.sand,
-    },
+    { num:'01', title:'Download Jeani', desc:'Find Jeani on the App Store. Create your profile, set your movement baseline, and you\'re ready to go — takes less than two minutes.', accent:C.amber },
+    { num:'02', title:'Sync Your Apple Watch', desc:'Open Jeani on your Apple Watch and start moving. Jeani reads your wrist motion in real time — no chest strap, no footpod, no extra kit.', accent:C.green },
+    { num:'03', title:'Get Your Score', desc:'After every session and every day, Jeani delivers your Motion score, Spotlight muscle insights, and a personalised Movement Goal — so you always know exactly where you stand.', accent:C.sand },
   ]
+
+  if (mobile) return (
+    <div style={{ minHeight:'100%',position:'relative',paddingBottom:20 }}>
+      <img src="/run-mountain.jpg" alt="" style={{ position:'fixed',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 45%',zIndex:0,pointerEvents:'none' }} />
+      <div style={{ position:'fixed',inset:0,background:'rgba(17,35,120,0.6)',zIndex:0,pointerEvents:'none' }} />
+      <div style={{ position:'fixed',inset:0,background:'linear-gradient(180deg,rgba(3,5,18,0.55) 0%,rgba(3,5,18,0.72) 100%)',zIndex:0,pointerEvents:'none' }} />
+      <div style={{ position:'relative',zIndex:1,padding:'24px 20px 0',textAlign:'center' }}>
+        <div style={{ fontSize:10,color:C.sand,fontFamily:'HostGrotesk',fontWeight:700,letterSpacing:2.5,marginBottom:8,opacity:0.7 }}>THREE STEPS</div>
+        <div style={{ fontFamily:'CrimsonPro,serif',fontSize:34,fontWeight:700,color:'#fff',lineHeight:1,marginBottom:8 }}>How it works</div>
+        <div style={{ fontSize:14,color:'rgba(255,255,255,0.5)',fontFamily:'CrimsonPro,serif',fontStyle:'italic',marginBottom:24 }}>From download to daily insight.</div>
+        <div style={{ display:'flex',flexDirection:'column',gap:12,textAlign:'left' }}>
+          {steps.map((s,i) => (
+            <motion.div key={s.num} initial={{ opacity:0,y:20 }} animate={{ opacity:1,y:0 }} transition={{ delay:i*0.15 }}
+              style={{ background:'rgba(255,255,255,0.07)',backdropFilter:'blur(20px)',borderRadius:20,padding:'22px 20px',border:'1px solid rgba(255,255,255,0.12)',position:'relative',overflow:'hidden' }}>
+              <Grain op={0.06} blend="overlay" />
+              <div style={{ marginBottom:12 }}>
+                <span style={{ fontFamily:'HostGrotesk',fontSize:10,fontWeight:700,color:s.accent,letterSpacing:2,background:`${s.accent}18`,border:`1px solid ${s.accent}40`,borderRadius:20,padding:'4px 12px' }}>STEP {s.num}</span>
+              </div>
+              <div style={{ fontFamily:'CrimsonPro,serif',fontSize:24,fontWeight:700,color:'#fff',lineHeight:1.1,marginBottom:10 }}>{s.title}</div>
+              <div style={{ fontSize:14,color:'rgba(255,255,255,0.62)',lineHeight:1.7 }}>{s.desc}</div>
+            </motion.div>
+          ))}
+        </div>
+        <div style={{ marginTop:24,display:'flex',alignItems:'center',justifyContent:'center',gap:10 }}>
+          <img src="/watch-main.png" alt="" style={{ height:32,borderRadius:6,border:'1px solid rgba(255,255,255,0.15)',objectFit:'cover',objectPosition:'top' }} />
+          <span style={{ fontSize:12,color:'rgba(255,255,255,0.45)' }}>Apple Watch Series 6+ · iOS 16+</span>
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <div style={{ width:'100%',height:'100%',position:'relative',overflow:'hidden',display:'flex',flexDirection:'column' }}>
@@ -909,6 +1041,7 @@ function HowItWorks() {
 ══════════════════════════════════════════════════════════════════ */
 function Plans() {
   const [billing, setBilling] = useState('annual')
+  const mobile = useIsMobile()
 
   const features = [
     'Motion Score — daily movement health rating',
@@ -923,6 +1056,63 @@ function Plans() {
   const price    = billing === 'monthly' ? '$9.99'  : '$99.99'
   const period   = billing === 'monthly' ? '/month'  : '/year'
   const subPrice = billing === 'monthly' ? null      : '$8.33/month'
+
+
+  if (mobile) return (
+    <div style={{ minHeight:'100%',background:'#f0ebe0',position:'relative',paddingBottom:20 }}>
+      <Grain op={0.05} blend="multiply" />
+      {/* Banner */}
+      <div style={{ position:'relative',height:160,overflow:'hidden' }}>
+        <img src="/run-dusk.jpg" alt="" style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 40%' }} />
+        <div style={{ position:'absolute',inset:0,background:'rgba(17,35,120,0.55)' }} />
+        <div style={{ position:'absolute',inset:0,background:'linear-gradient(180deg,transparent 30%,rgba(3,5,18,0.9) 100%)' }} />
+        <div style={{ position:'absolute',bottom:16,left:20 }}>
+          <div style={{ fontFamily:'CrimsonPro,serif',fontSize:26,fontWeight:700,color:'#fff',lineHeight:1.1 }}>Movement<br />is Medicine.</div>
+        </div>
+      </div>
+      <div style={{ padding:'20px 20px 0',position:'relative',zIndex:1 }}>
+        {/* Trial badge */}
+        <div style={{ background:C.green,borderRadius:30,padding:'7px 16px',display:'inline-flex',alignItems:'center',gap:6,marginBottom:18 }}>
+          <span style={{ fontSize:12,fontWeight:700,color:'#000',fontFamily:'HostGrotesk' }}>✦ 2-week free trial included</span>
+        </div>
+        <div style={{ fontFamily:'CrimsonPro,serif',fontSize:28,fontWeight:700,color:'#0a0e20',lineHeight:1,marginBottom:6 }}>Join the movement with Jeani</div>
+        <div style={{ fontSize:14,color:'#666',marginBottom:20 }}>Full access. One simple plan.</div>
+        {/* Toggle */}
+        <div style={{ display:'flex',background:'rgba(17,35,120,0.08)',borderRadius:30,padding:3,width:'fit-content',marginBottom:20 }}>
+          {['monthly','annual'].map(b => (
+            <button key={b} onClick={() => setBilling(b)}
+              style={{ padding:'9px 22px',borderRadius:26,border:'none',cursor:'pointer',fontSize:12,fontFamily:'HostGrotesk',fontWeight:600,transition:'all 0.25s',background:billing===b?C.blue:'transparent',color:billing===b?'#fff':'#888' }}>
+              {b === 'monthly' ? 'Monthly' : <span>Annual <span style={{ marginLeft:4,background:C.green,color:'#000',fontSize:9,fontWeight:700,padding:'2px 6px',borderRadius:8 }}>-17%</span></span>}
+            </button>
+          ))}
+        </div>
+        {/* Price */}
+        <div style={{ marginBottom:20 }}>
+          <AnimatePresence mode="wait">
+            <motion.div key={billing} initial={{ opacity:0,y:4 }} animate={{ opacity:1,y:0 }} exit={{ opacity:0,y:-4 }} transition={{ duration:0.2 }}>
+              <div style={{ display:'flex',alignItems:'baseline',gap:4 }}>
+                <span style={{ fontFamily:'CrimsonPro,serif',fontSize:52,fontWeight:700,color:C.blue,lineHeight:1,letterSpacing:-2 }}>{price}</span>
+                <span style={{ fontSize:16,color:'#888',fontFamily:'HostGrotesk' }}>{period}</span>
+              </div>
+              {subPrice && <div style={{ fontSize:13,color:'#888',marginTop:2 }}>That's {subPrice} billed annually</div>}
+              <div style={{ fontSize:13,color:C.green,fontWeight:600,marginTop:4 }}>✓ First fourteen days free</div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+        {/* Features */}
+        <div style={{ display:'flex',flexDirection:'column',gap:9,marginBottom:22 }}>
+          {features.map(f => (
+            <div key={f} style={{ display:'flex',gap:10,alignItems:'flex-start' }}>
+              <div style={{ width:18,height:18,borderRadius:'50%',background:`${C.blue}12`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,color:C.blue,flexShrink:0,marginTop:1 }}>✓</div>
+              <span style={{ fontSize:13,color:'#444',lineHeight:1.5 }}>{f}</span>
+            </div>
+          ))}
+        </div>
+        <button style={{ width:'100%',padding:'16px',borderRadius:14,border:'none',background:C.blue,color:'#fff',fontSize:16,fontWeight:700,fontFamily:'HostGrotesk',cursor:'pointer' }}>Start Free Trial</button>
+        <div style={{ textAlign:'center',fontSize:12,color:'#999',marginTop:10 }}>Cancel any time · No commitment</div>
+      </div>
+    </div>
+  )
 
   return (
     <div style={{ width:'100%',height:'100%',position:'relative',overflow:'hidden',display:'flex' }}>
@@ -1101,9 +1291,28 @@ function Intro({ onDone }) {
 export default function App() {
   const [showIntro, setShowIntro] = useState(true)
   const [activeTab, setActiveTab] = useState('app')
+  const mobile = useIsMobile()
   const sections = { app:TheApp, science:TheScience, how:HowItWorks, plans:Plans }
   const Section = sections[activeTab]
 
+  if (mobile) {
+    return (
+      <div style={{ minHeight:'100vh',display:'flex',flexDirection:'column',background:'#000' }}>
+        <AnimatePresence>{showIntro && <Intro onDone={() => setShowIntro(false)} mobile />}</AnimatePresence>
+        <TopNav active={activeTab} onChange={setActiveTab} onReset={() => setShowIntro(true)} mobile />
+        {/* Scrollable content area with bottom padding for tab bar */}
+        <div style={{ flex:1,paddingBottom:64 }}>
+          <AnimatePresence mode="wait">
+            <motion.div key={activeTab} initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.25 }}>
+              <Section />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    )
+  }
+
+  // Desktop
   return (
     <div style={{ width:'100vw',height:'100vh',overflow:'hidden',display:'flex',flexDirection:'column',background:'#000' }}>
       <AnimatePresence>{showIntro && <Intro onDone={() => setShowIntro(false)} />}</AnimatePresence>
