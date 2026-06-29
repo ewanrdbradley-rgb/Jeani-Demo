@@ -1039,6 +1039,10 @@ function HowItWorks() {
 /* ══════════════════════════════════════════════════════════════════
    PLANS SECTION
 ══════════════════════════════════════════════════════════════════ */
+// ▼▼▼ PASTE YOUR REAL APP STORE URL HERE ▼▼▼
+const APP_STORE_URL = 'https://apps.apple.com/us/app/jeani/id6742083552'
+// ▲▲▲ Both "Start Free Trial" buttons (mobile + desktop) link here ▲▲▲
+
 function Plans() {
   const [billing, setBilling] = useState('annual')
   const mobile = useIsMobile()
@@ -1108,7 +1112,7 @@ function Plans() {
             </div>
           ))}
         </div>
-        <button style={{ width:'100%',padding:'16px',borderRadius:14,border:'none',background:C.blue,color:'#fff',fontSize:16,fontWeight:700,fontFamily:'HostGrotesk',cursor:'pointer' }}>Start Free Trial</button>
+        <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" style={{ display:'block',textAlign:'center',width:'100%',padding:'16px',borderRadius:14,border:'none',background:C.blue,color:'#fff',fontSize:16,fontWeight:700,fontFamily:'HostGrotesk',cursor:'pointer',textDecoration:'none',boxSizing:'border-box' }}>Start Free Trial</a>
         <div style={{ textAlign:'center',fontSize:12,color:'#999',marginTop:10 }}>Cancel any time · No commitment</div>
       </div>
     </div>
@@ -1206,11 +1210,12 @@ function Plans() {
           </motion.div>
 
           {/* CTA */}
-          <motion.button
+          <motion.a
+            href={APP_STORE_URL} target="_blank" rel="noopener noreferrer"
             initial={{ opacity:0,y:8 }} animate={{ opacity:1,y:0 }} transition={{ delay:0.45 }}
-            style={{ width:'100%',padding:'17px',borderRadius:16,border:'none',background:C.blue,color:'#fff',fontSize:16,fontWeight:700,fontFamily:'HostGrotesk',cursor:'pointer',boxShadow:'0 8px 32px rgba(17,35,120,0.28)',letterSpacing:0.3 }}>
+            style={{ display:'block',textAlign:'center',width:'100%',padding:'17px',borderRadius:16,border:'none',background:C.blue,color:'#fff',fontSize:16,fontWeight:700,fontFamily:'HostGrotesk',cursor:'pointer',boxShadow:'0 8px 32px rgba(17,35,120,0.28)',letterSpacing:0.3,textDecoration:'none',boxSizing:'border-box' }}>
             Start Free Trial
-          </motion.button>
+          </motion.a>
           <div style={{ textAlign:'center',fontSize:12,color:'#999',marginTop:12,fontFamily:'HostGrotesk' }}>
             Cancel any time · No commitment
           </div>
