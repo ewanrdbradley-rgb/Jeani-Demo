@@ -15,7 +15,7 @@ import {
 import { C, F, EASE, JOINTS, APP_STORE_URL } from './tokens.js'
 import {
   Phone, Shot, SignalGrid, MovementToday, RadarPlot, RadarLegend,
-  RadarScreen, ChatScreen, WatchFace,
+  RadarScreen, ChatScreen,
 } from './screens.jsx'
 
 /* ── A panel that reports when it crosses the middle of the screen ── */
@@ -562,10 +562,24 @@ export function WatchInterlude() {
             </div>
           </Reveal>
 
-          <Reveal delay={0.15} style={{ display:'flex',justifyContent:'center',alignItems:'center',
-            gap: mobile ? 26 : 44 }}>
-            <div style={{ transform:'rotate(-6deg)' }}><WatchFace pct={73} size={mobile ? 116 : 148} band="#2c2c30" /></div>
-            <div style={{ transform:'rotate(5deg) translateY(18px)' }}><WatchFace pct={100} size={mobile ? 116 : 148} band="#8a6a4a" /></div>
+          <Reveal delay={0.15} style={{ display:'flex',justifyContent:'center',alignItems:'center' }}>
+            <div style={{ position:'relative',display:'flex',justifyContent:'center' }}>
+              {/* Halo behind the render so the cut-out product shot sits on the
+                  backplate rather than floating flat on it. */}
+              <div aria-hidden="true" style={{ position:'absolute',inset:'-18% -14%',
+                background:`radial-gradient(ellipse at center, ${C.sand}1f 0%, ${C.electric}14 42%, transparent 72%)` }} />
+              <motion.img
+                src="/watch-render.png"
+                alt="Jeani on Apple Watch, showing a daily goal of 73 percent"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut' }}
+                /* The watch is only 454px wide in the source render, so it is
+                   held near that size to stay sharp on 2x displays. A higher
+                   resolution export would let this sit larger. */
+                style={{ position:'relative',zIndex:2,width: mobile ? 'min(215px, 58vw)' : 'min(300px, 23vw)',
+                  height:'auto',display:'block',
+                  filter:'drop-shadow(0 34px 60px rgba(0,0,0,0.55))' }} />
+            </div>
           </Reveal>
         </div>
       </Backplate>
