@@ -5,41 +5,69 @@
   src: url('/fonts/CrimsonPro/CrimsonPro-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: 'CrimsonPro';
   src: url('/fonts/CrimsonPro/CrimsonPro-Italic-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 900;
   font-style: italic;
+  font-display: swap;
 }
 @font-face {
   font-family: 'HostGrotesk';
   src: url('/fonts/HostGrotesk/HostGrotesk-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: 'HostGrotesk';
   src: url('/fonts/HostGrotesk/HostGrotesk-Italic-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 900;
   font-style: italic;
+  font-display: swap;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body, #root {
+html {
+  scroll-behavior: smooth;
+  /* Chapter anchors clear the sticky rail */
+  scroll-padding-top: 64px;
+}
+
+body, #root {
   width: 100%;
-  height: 100%;
-  background: #000;
+  background: #05060f;
+  color: #fff;
   font-family: 'HostGrotesk', system-ui, sans-serif;
 }
 
-/* Desktop/tablet: no scroll, fixed full screen */
-@media (min-width: 768px) {
-  html, body, #root { overflow: hidden; }
+/* Contain any horizontal overspill from the full-bleed photo bands.
+   `clip` rather than `hidden` on purpose: with overflow-x:hidden the browser
+   computes overflow-y to auto, which turns the element into a scroll
+   container and breaks position:sticky for the pinned phones. `clip` crops
+   without creating one. The `hidden` line is the fallback for old engines. */
+body {
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
-/* Mobile: allow scroll */
-@media (max-width: 767px) {
-  html, body, #root { overflow-x: hidden; overflow-y: auto; height: auto; min-height: 100%; }
+/* The whole demo is one continuous scroll now: nothing is height-locked,
+   so nothing clips on short laptop screens. */
+
+::selection { background: #5C8DFF; color: #05060f; }
+
+/* Hide scrollbars on the horizontal pill rails only */
+.no-bar::-webkit-scrollbar { display: none; }
+.no-bar { scrollbar-width: none; -ms-overflow-style: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
