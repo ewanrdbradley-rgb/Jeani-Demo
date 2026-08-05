@@ -102,7 +102,7 @@ function PinnedChapter({ id, visuals, panels, visualSide = 'left', background })
    INTERLUDE: a full-bleed photograph between chapters.
 
    These are the breathers. Each carries a small eyebrow and one
-   sub-headline set well below chapter scale, so the big Crimson Pro
+   sub-headline set well below chapter scale, so the big display
    statements stay reserved for the chapters themselves.
 ══════════════════════════════════════════════════════════════════ */
 function Interlude({ image, pos = 'center 45%', eyebrow, line, italic, caption, align = 'left' }) {
@@ -138,7 +138,7 @@ function Interlude({ image, pos = 'center 45%', eyebrow, line, italic, caption, 
           <Eyebrow>{eyebrow}</Eyebrow>
           {/* Deliberately smaller than a chapter headline */}
           <div style={{ fontFamily:F.display,fontWeight:700,fontSize:'clamp(24px, 2.9vw, 44px)',
-            lineHeight:1.08,letterSpacing:'-0.015em',color:'#fff',marginTop:14,
+            lineHeight:1.1,letterSpacing:'-0.022em',color:'#fff',marginTop:14,
             // Centred bands get a wider measure so the line breaks fall evenly
             maxWidth: align === 'center' ? '26ch' : '19ch' }}>
             {line}{italic && <> <span style={{ fontStyle:'italic',color:C.sand }}>{italic}</span></>}
@@ -240,7 +240,7 @@ export function Hero() {
           initial={{ opacity:0, y:18 }} animate={{ opacity:1, y:0 }}
           transition={{ delay:0.45, duration:1, ease:EASE }}
           style={{ fontFamily:F.display,fontWeight:700,fontSize:'clamp(36px, 6.2vw, 92px)',
-            lineHeight:0.97,letterSpacing:'-0.025em',color:'#fff',maxWidth:16 + 'ch' }}>
+            lineHeight:1.02,letterSpacing:'-0.032em',color:'#fff',maxWidth:16 + 'ch' }}>
           Not just how much<br />you move.
           <span style={{ fontStyle:'italic',color:C.sand }}> How well.</span>
         </motion.h1>
@@ -804,7 +804,7 @@ export function PlansChapter() {
                   transition={{ duration:0.22 }} style={{ marginBottom:30 }}>
                   <div style={{ display:'flex',alignItems:'baseline',gap:8 }}>
                     <span style={{ fontFamily:F.display,fontSize:'clamp(48px,5vw,72px)',fontWeight:700,
-                      color:'#fff',lineHeight:1,letterSpacing:'-0.03em' }}>{price}</span>
+                      color:'#fff',lineHeight:1,letterSpacing:'-0.038em' }}>{price}</span>
                     <span style={{ fontFamily:F.body,fontSize:17,color:'rgba(255,255,255,0.45)' }}>{period}</span>
                   </div>
                   {sub && <div style={{ fontFamily:F.body,fontSize:13,color:'rgba(255,255,255,0.45)',marginTop:6 }}>{sub}</div>}

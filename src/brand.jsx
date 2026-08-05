@@ -89,8 +89,10 @@ export const Eyebrow = ({ children, color = C.sand, style }) => (
 )
 
 export const Display = ({ children, size = 'clamp(38px, 5.4vw, 82px)', color = '#fff', style }) => (
-  <h2 style={{ fontFamily:F.display,fontWeight:700,fontSize:size,lineHeight:0.98,
-    letterSpacing:'-0.02em',color,...style }}>{children}</h2>
+  /* Leading is looser and tracking tighter than the old serif setting:
+     Host Grotesk has a taller x-height, so 0.98 collided on two-line heads. */
+  <h2 style={{ fontFamily:F.display,fontWeight:700,fontSize:size,lineHeight:1.04,
+    letterSpacing:'-0.028em',color,...style }}>{children}</h2>
 )
 
 export const Lede = ({ children, color = 'rgba(255,255,255,0.62)', style }) => (

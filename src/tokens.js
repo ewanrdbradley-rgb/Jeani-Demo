@@ -21,8 +21,12 @@ export const C = {
   red:      '#FF6B6B',
 }
 
+/* Host Grotesk throughout, display and body alike. The brand book (p.4)
+   names Crimson Pro as the primary heading face; the demo deliberately runs
+   all-sans instead. Crimson Pro is still declared in index.css, so putting
+   it back is a one-line change here. */
 export const F = {
-  display: "'CrimsonPro', Georgia, serif",
+  display: "'HostGrotesk', system-ui, sans-serif",
   body:    "'HostGrotesk', system-ui, sans-serif",
 }
 
