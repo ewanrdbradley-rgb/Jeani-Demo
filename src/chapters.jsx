@@ -201,17 +201,35 @@ export function Hero() {
             </a>
           </div>
 
-          <Glass pad={mobile ? 16 : 20} radius={18}
-            style={{ marginTop:34,display:'inline-block',maxWidth:mobile ? '100%' : 480 }}>
-            <div style={{ display:'grid',gridTemplateColumns:'repeat(3, 1fr)',gap: mobile ? 10 : 30 }}>
-              {[['6', 'signals'], ['1', 'sensor'], ['0', 'extra kit']].map(([n, l]) => (
-                <div key={l}>
-                  <div style={{ fontFamily:F.display,fontSize: mobile ? 26 : 32,fontWeight:700,
-                    color:'#fff',lineHeight:1 }}>{n}</div>
-                  <div style={{ fontFamily:F.body,fontSize: mobile ? 9.5 : 11,letterSpacing:1.4,
-                    textTransform:'uppercase',color:C.textMute,marginTop:4 }}>{l}</div>
+          {/* The approach in one line: hardware you own, raw sensor data, insight out */}
+          <Glass pad={mobile ? 14 : 18} radius={18}
+            style={{ marginTop:34,display:'inline-block',maxWidth:'100%' }}>
+            <div style={{ display:'flex',alignItems:'center',gap: mobile ? 8 : 14,flexWrap:'wrap' }}>
+              {[
+                ['⌚', 'The watch you own'],
+                ['〰', 'Raw accelerometer data'],
+                ['✓', 'Movement insights'],
+              ].map(([icon, label], i, arr) => (
+                <div key={label} style={{ display:'flex',alignItems:'center',gap: mobile ? 8 : 14 }}>
+                  <div style={{ display:'flex',alignItems:'center',gap:8 }}>
+                    <span style={{ width: mobile ? 26 : 30,height: mobile ? 26 : 30,borderRadius:'50%',
+                      flexShrink:0,background:'rgba(255,255,255,0.14)',
+                      display:'flex',alignItems:'center',justifyContent:'center',
+                      fontSize: mobile ? 12 : 14,color:'#fff' }}>{icon}</span>
+                    <span style={{ fontFamily:F.body,fontSize: mobile ? 11.5 : 13.5,fontWeight:600,
+                      color:C.textSoft,whiteSpace:'nowrap' }}>{label}</span>
+                  </div>
+                  {i < arr.length - 1 && (
+                    <span aria-hidden="true" style={{ fontFamily:F.body,fontSize: mobile ? 13 : 15,
+                      color:C.sand,opacity:0.8 }}>→</span>
+                  )}
                 </div>
               ))}
+            </div>
+            <div style={{ fontFamily:F.body,fontSize: mobile ? 11 : 12.5,color:C.textMute,
+              marginTop:10,lineHeight:1.5 }}>
+              No new hardware. Jeani reads the accelerometer in your Apple Watch and turns it
+              into six movement signals.
             </div>
           </Glass>
         </motion.div>
@@ -230,20 +248,18 @@ export function MotionChapter() {
       id="motion"
       visualSide="left"
       visuals={[
-        <Phone key="a" width={mobile ? 268 : 300}><Shot src="/screenshots/home.jpg" alt="Jeani home screen" /></Phone>,
-        <Phone key="b" width={mobile ? 268 : 300}><Shot src="/screenshots/motion.jpg" alt="Motion score screen" /></Phone>,
-        <Phone key="c" width={mobile ? 268 : 300}><Shot src="/screenshots/motion-chart.jpg" alt="Motion history" /></Phone>,
+        // One pinned screenshot carries the whole chapter; the signal grid and
+        // day chart are live widgets, so extra phones added nothing.
+        <Phone key="a" width={mobile ? 268 : 300}><Shot src="/screenshots/motion.jpg" alt="Motion score screen" /></Phone>,
       ]}
       panels={[
         <>
           <ChapterMark n="01">Motion</ChapterMark>
           <Display>Your movement quality, scored out of 100.</Display>
-          <Lede style={{ marginTop:18 }}>
-            Every night Jeani rebuilds one number from six readings of how you actually moved.
-            You open the app in the morning and know whether to push or hold back.
-          </Lede>
-          <Glass pad={18} radius={18} style={{ marginTop:26,display:'inline-block' }}>
-            <div style={{ display:'flex',alignItems:'center',gap:16 }}>
+          {/* The score bubble sits directly under the headline, flush with its
+              left edge and spanning the copy column, so the two read as one unit */}
+          <Glass pad={mobile ? 16 : 20} radius={18} style={{ marginTop:22,maxWidth:'46ch' }}>
+            <div style={{ display:'flex',alignItems:'center',gap:18 }}>
               <span style={{ fontFamily:F.display,fontSize: mobile ? 52 : 62,fontWeight:700,
                 color:C.ice,lineHeight:0.85,letterSpacing:'-0.04em' }}>72</span>
               <div>
@@ -254,6 +270,10 @@ export function MotionChapter() {
               </div>
             </div>
           </Glass>
+          <Lede style={{ marginTop:20 }}>
+            Every night Jeani rebuilds this number from six readings of how you actually moved.
+            You open the app in the morning and know whether to push or hold back.
+          </Lede>
         </>,
         <>
           <Eyebrow>What goes into the score</Eyebrow>
@@ -282,7 +302,57 @@ export function MotionChapter() {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   02 · INJURY RADAR
+   02 · MOVEMENT GOAL
+══════════════════════════════════════════════════════════════════ */
+export function GoalChapter() {
+  const mobile = useIsMobile()
+  return (
+    <PinnedChapter
+      id="goal"
+      visualSide="right"
+      visuals={[
+        <Phone key="a" width={mobile ? 268 : 300}>
+          <Shot src="/screenshots/goal-achieved.jpg" alt="Daily Motion Goal screen showing 100 percent achieved" />
+        </Phone>,
+      ]}
+      panels={[
+        <>
+          <ChapterMark n="02">Movement Goal</ChapterMark>
+          <Display>A daily goal, built from your score.</Display>
+          <Lede style={{ marginTop:18 }}>
+            Each day Jeani sets a motion target sized to your recent scores. Hit 100 percent
+            and the day counts; miss it and tomorrow&rsquo;s goal adjusts so it stays reachable.
+          </Lede>
+        </>,
+        <>
+          <Eyebrow>Streaks</Eyebrow>
+          <Display size="clamp(26px, 2.9vw, 42px)" style={{ marginTop:12,marginBottom:14 }}>
+            Consistency, counted day by day.
+          </Display>
+          <Lede style={{ marginBottom:22 }}>
+            Every completed goal extends your streak. The app records when you hit it and how
+            long you have kept it going.
+          </Lede>
+          <div style={{ display:'flex',gap:12,flexWrap:'wrap' }}>
+            {[['Goal achieved', '100%', C.green],
+              ['Achieved at', '11:12 am', C.ice],
+              ['Streak', '8 days', C.amber]].map(([k, v, col]) => (
+              <Glass key={k} pad={18} radius={18} tone="soft" style={{ flex:'1 1 140px' }}>
+                <div style={{ fontFamily:F.body,fontSize:10.5,letterSpacing:2,
+                  textTransform:'uppercase',color:C.textMute }}>{k}</div>
+                <div style={{ fontFamily:F.display,fontSize: mobile ? 26 : 32,fontWeight:700,
+                  color:col,lineHeight:1,marginTop:8,letterSpacing:'-0.02em' }}>{v}</div>
+              </Glass>
+            ))}
+          </div>
+        </>,
+      ]}
+    />
+  )
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   03 · INJURY RADAR
 ══════════════════════════════════════════════════════════════════ */
 export function RadarChapter() {
   const mobile = useIsMobile()
@@ -300,11 +370,10 @@ export function RadarChapter() {
           </div>
           <div style={{ marginTop:20,display:'flex',justifyContent:'center' }}><RadarLegend /></div>
         </Glass>,
-        <Phone key="c" width={mobile ? 268 : 300}><RadarScreen /></Phone>,
       ]}
       panels={[
         <>
-          <ChapterMark n="02">Injury Radar</ChapterMark>
+          <ChapterMark n="03">Injury Radar</ChapterMark>
           <Display>Strain on each joint, before it becomes an injury.</Display>
           <Lede style={{ marginTop:18 }}>
             Jeani estimates how much load your hips, knees and ankles are each carrying, left
@@ -389,26 +458,16 @@ export function SpotlightChapter() {
       visualSide="left"
       visuals={[
         <Phone key="a" width={mobile ? 268 : 300}><Shot src="/screenshots/spotlight.jpg" alt="Spotlight screen" /></Phone>,
-        <Phone key="b" width={mobile ? 268 : 300}><Shot src="/screenshots/spotlight.jpg" alt="Spotlight detail" /></Phone>,
-        <Phone key="c" width={mobile ? 268 : 300}><ChatScreen /></Phone>,
+        <Phone key="b" width={mobile ? 268 : 300}><ChatScreen /></Phone>,
       ]}
       panels={[
         <>
-          <ChapterMark n="03">Spotlight</ChapterMark>
+          <ChapterMark n="04">Spotlight</ChapterMark>
           <Display>The one area to work on this week.</Display>
-          <Lede style={{ marginTop:18 }}>
+          <Lede style={{ marginTop:18,marginBottom:22 }}>
             Rather than handing you six joints and six signals to interpret, Jeani picks the
-            single area most worth your attention and explains why it was chosen.
-          </Lede>
-        </>,
-        <>
-          <Eyebrow>This week&rsquo;s spotlight</Eyebrow>
-          <Display size="clamp(26px, 2.9vw, 42px)" style={{ marginTop:12,marginBottom:18 }}>
-            Left hamstring, and what to do about it.
-          </Display>
-          <Lede style={{ marginBottom:20 }}>
-            Each spotlight comes with the trend that triggered it and a short set of stretches
-            aimed at that specific area.
+            single area most worth your attention, shows the trend that triggered it, and
+            gives you stretches aimed at that specific area.
           </Lede>
           <Glass pad={mobile ? 20 : 24}>
             <div style={{ display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16 }}>
@@ -521,7 +580,7 @@ export function ScienceChapter() {
         <div style={{ display:'grid',gridTemplateColumns: mobile ? '1fr' : '1fr 1fr',
           gap: mobile ? 26 : 56,alignItems:'end',marginBottom: mobile ? 34 : 56 }}>
           <Reveal>
-            <ChapterMark n="04">The science</ChapterMark>
+            <ChapterMark n="05">The science</ChapterMark>
             <Display>How the numbers are produced.</Display>
           </Reveal>
           <Reveal delay={0.1}>
@@ -582,7 +641,7 @@ export function PlansChapter() {
         gap: mobile ? 34 : 60,alignItems:'center' }}>
 
         <Reveal>
-          <ChapterMark n="05">Plans</ChapterMark>
+          <ChapterMark n="06">Plans</ChapterMark>
           <Display>Try the full app free for two weeks.</Display>
           <Lede style={{ marginTop:16 }}>
             Everything in this walkthrough is included. One plan, no tiers, nothing held back.

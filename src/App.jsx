@@ -7,17 +7,18 @@ import './index.css'
 import { useIsMobile, PhotoBackdrop } from './brand.jsx'
 import { C, F, APP_STORE_URL } from './tokens.js'
 import {
-  Hero, MotionChapter, RadarChapter, SpotlightChapter,
+  Hero, MotionChapter, GoalChapter, RadarChapter, SpotlightChapter,
   WatchInterlude, ScienceChapter, PlansChapter, Footer,
   InterludeLab, InterludeEarly, InterludeMorning,
 } from './chapters.jsx'
 
 const CHAPTERS = [
   { id:'motion',    n:'01', label:'Motion' },
-  { id:'radar',     n:'02', label:'Radar' },
-  { id:'spotlight', n:'03', label:'Spotlight' },
-  { id:'science',   n:'04', label:'Science' },
-  { id:'plans',     n:'05', label:'Plans' },
+  { id:'goal',      n:'02', label:'Goal' },
+  { id:'radar',     n:'03', label:'Radar' },
+  { id:'spotlight', n:'04', label:'Spotlight' },
+  { id:'science',   n:'05', label:'Science' },
+  { id:'plans',     n:'06', label:'Plans' },
 ]
 
 /* Which chapter owns the middle of the viewport right now */
@@ -131,11 +132,12 @@ export default function App() {
       <Rail />
       <Hero />
       <MotionChapter />
+      <InterludeMorning />
+      <GoalChapter />
       <InterludeLab />
       <RadarChapter />
       <InterludeEarly />
       <SpotlightChapter />
-      <InterludeMorning />
       <WatchInterlude />
       <ScienceChapter />
       <PlansChapter />
