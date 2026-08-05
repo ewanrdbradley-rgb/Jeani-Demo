@@ -205,6 +205,7 @@ function Heading({ n, kicker, title, italic, lede, accent = C.sand }) {
 ══════════════════════════════════════════════════════════════════ */
 export function Hero() {
   const ref = useRef(null)
+  const mobile = useIsMobile()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const y     = useTransform(scrollYProgress, [0, 1], ['0%', '22%'])
   const fade  = useTransform(scrollYProgress, [0, 0.85], [1, 0])
@@ -256,12 +257,17 @@ export function Hero() {
         {/* Proof strip */}
         <motion.div
           initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ delay:1.15, duration:0.8 }}
-          style={{ display:'flex',gap:'clamp(20px,3.4vw,52px)',marginTop:'clamp(26px,3.2vw,42px)',flexWrap:'wrap',justifyContent:'center' }}>
-          {[['6', 'signals'], ['1', 'sensor'], ['0', 'extra hardware']].map(([n, l]) => (
-            <div key={l} style={{ display:'flex',alignItems:'baseline',gap:8 }}>
+          /* A three column grid rather than a wrapping flex row: on a phone
+             the row broke 2 + 1 and read as a mistake. */
+          style={{ display:'grid',gridTemplateColumns:'repeat(3, 1fr)',
+            gap:'clamp(8px,2vw,52px)',marginTop:'clamp(26px,3.2vw,42px)',
+            width:'100%',maxWidth:520 }}>
+          {[['6', 'signals'], ['1', 'sensor'], ['0', 'extra kit']].map(([n, l]) => (
+            <div key={l} style={{ display:'flex',flexDirection: mobile ? 'column' : 'row',
+              alignItems: mobile ? 'center' : 'baseline',justifyContent:'center',gap: mobile ? 2 : 8 }}>
               <span style={{ fontFamily:F.display,fontSize:'clamp(26px,2.8vw,38px)',fontWeight:700,color:C.sand }}>{n}</span>
-              <span style={{ fontFamily:F.body,fontSize:12,letterSpacing:2,textTransform:'uppercase',
-                color:'rgba(255,255,255,0.45)' }}>{l}</span>
+              <span style={{ fontFamily:F.body,fontSize: mobile ? 10 : 12,letterSpacing: mobile ? 1.2 : 2,
+                textTransform:'uppercase',textAlign:'center',color:'rgba(255,255,255,0.45)' }}>{l}</span>
             </div>
           ))}
         </motion.div>
@@ -284,6 +290,7 @@ export function Hero() {
    01 · MOTION
 ══════════════════════════════════════════════════════════════════ */
 export function MotionChapter() {
+  const mobile = useIsMobile()
   const bg = (
     <>
       <div style={{ position:'absolute',inset:0,background:`linear-gradient(180deg, ${C.night} 0%, #070c28 40%, ${C.night} 100%)` }} />
@@ -307,8 +314,9 @@ export function MotionChapter() {
         <>
           <Heading n="01" kicker="Motion" title="One number for" italic="movement quality."
             lede="Step counts tell you that you moved. They say nothing about how well. Motion is a single 0 to 100 score, rebuilt nightly from six independent readings of your gait, so you open the app to an answer rather than a dashboard." />
-          <div style={{ display:'flex',alignItems:'baseline',gap:18,marginTop:36 }}>
-            <span style={{ fontFamily:F.display,fontSize:88,fontWeight:700,color:C.ice,lineHeight:0.85 }}>72</span>
+          <div style={{ display:'flex',flexDirection: mobile ? 'column' : 'row',
+            alignItems: mobile ? 'flex-start' : 'baseline',gap: mobile ? 6 : 18,marginTop:36 }}>
+            <span style={{ fontFamily:F.display,fontSize: mobile ? 72 : 88,fontWeight:700,color:C.ice,lineHeight:0.85 }}>72</span>
             <div>
               <div style={{ fontFamily:F.body,fontSize:13,letterSpacing:2.4,textTransform:'uppercase',color:'rgba(255,255,255,0.42)' }}>
                 Today
@@ -636,12 +644,13 @@ export function ScienceChapter() {
               takes the same underlying measures and derives them from the accelerometer you
               are already wearing, every day, for free.
             </Lede>
-            <div style={{ display:'flex',gap:36,marginTop:30,flexWrap:'wrap' }}>
+            <div style={{ display:'grid',gridTemplateColumns:'repeat(3, 1fr)',
+              gap: mobile ? 10 : 36,marginTop:30 }}>
               {[['6', 'joint estimates'], ['3', 'axes of motion'], ['0', 'extra hardware']].map(([n, l]) => (
                 <div key={l}>
-                  <div style={{ fontFamily:F.display,fontSize:46,fontWeight:700,color:C.navy,lineHeight:1 }}>{n}</div>
-                  <div style={{ fontFamily:F.body,fontSize:11.5,letterSpacing:1.8,textTransform:'uppercase',
-                    color:'#7a7a8a',marginTop:4 }}>{l}</div>
+                  <div style={{ fontFamily:F.display,fontSize: mobile ? 34 : 46,fontWeight:700,color:C.navy,lineHeight:1 }}>{n}</div>
+                  <div style={{ fontFamily:F.body,fontSize: mobile ? 9.5 : 11.5,letterSpacing: mobile ? 0.9 : 1.8,
+                    textTransform:'uppercase',color:'#7a7a8a',marginTop:4 }}>{l}</div>
                 </div>
               ))}
             </div>

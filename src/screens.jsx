@@ -8,7 +8,7 @@
 ══════════════════════════════════════════════════════════════════ */
 import { useState, useEffect, useRef } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { Grain } from './brand.jsx'
+import { Grain, useIsMobile } from './brand.jsx'
 import { C, F, EASE, SIGNALS, JOINTS, DAY } from './tokens.js'
 
 /* ── Phone frame ─────────────────────────────────────────────────── */
@@ -53,10 +53,13 @@ export function SignalGrid({ compact = false }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-15% 0px' })
   const active = SIGNALS.find(s => s.key === sel)
+  // Three across is too tight to fit a label and a two-digit score on a phone
+  const narrow = useIsMobile(560)
 
   return (
     <div ref={ref}>
-      <div style={{ display:'grid',gridTemplateColumns:'repeat(3, minmax(0, 1fr))',gap:compact ? 8 : 12 }}>
+      <div style={{ display:'grid',
+        gridTemplateColumns:`repeat(${narrow ? 2 : 3}, minmax(0, 1fr))`,gap:compact ? 8 : 12 }}>
         {SIGNALS.map((s, i) => {
           const on = s.key === sel
           const col = bandColor(s.value)

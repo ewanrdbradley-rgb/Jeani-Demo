@@ -33,9 +33,11 @@ function useActiveChapter() {
       },
       { rootMargin: '-45% 0px -45% 0px', threshold: [0, 0.25, 0.5, 1] },
     )
-    const ids = ['top', ...CHAPTERS.map(c => c.id), 'watch']
-    ids.forEach(id => {
-      const el = document.getElementById(id)
+    // Only the numbered chapters are observed. The hero, the photo bands and
+    // the watch interlude are deliberately left out: if they could win, the
+    // rail would show no active chapter and, on mobile, no label at all.
+    CHAPTERS.forEach(c => {
+      const el = document.getElementById(c.id)
       if (el) obs.observe(el)
     })
     return () => obs.disconnect()
@@ -51,11 +53,19 @@ function Rail() {
   const { scrollYProgress } = useScroll()
   const bar = useSpring(scrollYProgress, { stiffness: 140, damping: 28, restDelta: 0.001 })
 
+  /* The rail turns opaque once the hero is three quarters gone. Driven by an
+     observer on the hero rather than a scroll handler: no state update on
+     every scroll frame, and nothing to go stale if a scroll event is missed.
+     A -25% top margin makes the hero stop intersecting at exactly 0.75vh. */
   useEffect(() => {
-    const fn = () => setSolid(window.scrollY > window.innerHeight * 0.75)
-    fn()
-    window.addEventListener('scroll', fn, { passive: true })
-    return () => window.removeEventListener('scroll', fn)
+    const hero = document.getElementById('top')
+    if (!hero) return
+    const obs = new IntersectionObserver(
+      ([e]) => setSolid(!e.isIntersecting),
+      { rootMargin: '-25% 0px 0px 0px', threshold: 0 },
+    )
+    obs.observe(hero)
+    return () => obs.disconnect()
   }, [])
 
   /* On narrow screens the five chapters do not all fit, so keep the current
@@ -85,26 +95,38 @@ function Rail() {
             style={{ height: mobile ? 18 : 21,opacity:0.95 }} />
         </a>
 
-        <nav ref={navRef} className="no-bar" style={{ display:'flex',gap:mobile ? 6 : 4,flex:1,
-          overflowX:'auto',alignItems:'center',
-          // Fades the trailing chip when the rail overflows, so it reads as scrollable
-          maskImage: mobile ? 'linear-gradient(90deg, #000 84%, transparent 100%)' : 'none',
-          WebkitMaskImage: mobile ? 'linear-gradient(90deg, #000 84%, transparent 100%)' : 'none' }}>
+        {/* minWidth:0 matters: a flex item defaults to min-width:auto and will
+            refuse to shrink below its content, which pushed this rail wider
+            than the viewport on a phone and shunted 04 and 05 off-screen. */}
+        {/* minWidth:0 matters: a flex item defaults to min-width:auto and will
+            refuse to shrink below its content, which pushed this rail wider
+            than the viewport on a phone and shunted 04 and 05 off-screen. */}
+        <nav ref={navRef} className="no-bar" style={{ display:'flex',gap:mobile ? 2 : 4,flex:1,
+          minWidth:0,overflowX:'auto',alignItems:'center',justifyContent:'flex-start' }}>
           {CHAPTERS.map(c => {
             const on = active === c.id
+            // On a phone every chapter is a number and exactly one spells
+            // itself out, so all five fit. Before any chapter is reached the
+            // first one carries the label, so the rail never reads as a row
+            // of bare digits.
+            const showLabel = !mobile || c.id === (active || CHAPTERS[0].id)
             return (
               <a key={c.id} href={`#${c.id}`} data-chip={c.id}
-                style={{ display:'flex',alignItems:'center',gap:7,textDecoration:'none',flexShrink:0,
-                  padding: mobile ? '6px 11px' : '7px 14px',borderRadius:20,
+                aria-label={c.label} aria-current={on ? 'true' : undefined}
+                style={{ display:'flex',alignItems:'center',gap: showLabel ? 6 : 0,
+                  textDecoration:'none',flexShrink:0,
+                  padding: mobile ? '6px 8px' : '7px 14px',borderRadius:20,
                   background: on ? 'rgba(251,236,207,0.12)' : 'transparent',
                   transition:'background 0.25s' }}>
-                <span style={{ fontFamily:F.display,fontSize:11,fontWeight:700,
-                  color: on ? C.sand : 'rgba(255,255,255,0.3)' }}>{c.n}</span>
-                <span style={{ fontFamily:F.body,fontSize: mobile ? 11 : 11.5,fontWeight: on ? 700 : 500,
-                  letterSpacing:1.4,textTransform:'uppercase',
-                  color: on ? '#fff' : 'rgba(255,255,255,0.42)',transition:'color 0.25s' }}>
-                  {c.label}
-                </span>
+                <span style={{ fontFamily:F.display,fontSize: mobile ? 10.5 : 11,fontWeight:700,
+                  color: on ? C.sand : 'rgba(255,255,255,0.34)' }}>{c.n}</span>
+                {showLabel && (
+                  <span style={{ fontFamily:F.body,fontSize: mobile ? 10 : 11.5,fontWeight: on ? 700 : 500,
+                    letterSpacing: mobile ? 0.8 : 1.4,textTransform:'uppercase',whiteSpace:'nowrap',
+                    color: on ? '#fff' : 'rgba(255,255,255,0.5)',transition:'color 0.25s' }}>
+                    {c.label}
+                  </span>
+                )}
               </a>
             )
           })}
