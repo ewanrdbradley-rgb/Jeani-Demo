@@ -1,13 +1,13 @@
 /* ══════════════════════════════════════════════════════════════════
-   BRAND: shared surfaces and editorial primitives.
-   Colours, fonts and data live in tokens.js.
+   BRAND: the photographic backdrop, liquid glass surfaces, and the
+   editorial type primitives.
 
-   The page is paper, so these default to navy-on-sand. The two dark
-   contexts, full-bleed photography and the DataPanel, pass their own
-   light colours in.
+   One fixed backdrop runs the whole page and crossfades between images
+   as you scroll. Chapters lay a scrim over it so copy stays legible;
+   the interlude bands thin that scrim so the photograph reads clearly.
 ══════════════════════════════════════════════════════════════════ */
 import { useState, useEffect, useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { C, F, EASE } from './tokens.js'
 
 /* ── Viewport ────────────────────────────────────────────────────── */
@@ -21,16 +21,82 @@ export function useIsMobile(bp = 900) {
   return m
 }
 
-/* ── Film grain: brand book p.6 calls for grain on the brand surfaces ── */
+/* ── Film grain, brand book p.6 ──────────────────────────────────── */
 const NOISE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")`
 
-/* Local grain, for small surfaces only. Blending a repeating texture over a
-   very tall element is expensive to repaint on scroll. */
-export const Grain = ({ op = 0.11, blend = 'overlay', z = 5 }) => (
+export const Grain = ({ op = 0.1, blend = 'overlay', z = 5 }) => (
   <div style={{ position:'absolute',inset:0,pointerEvents:'none',zIndex:z,
     backgroundImage:NOISE,backgroundRepeat:'repeat',backgroundSize:'160px',
     opacity:op,mixBlendMode:blend }} />
 )
+
+/* ══════════════════════════════════════════════════════════════════
+   PHOTO BACKDROP
+   Fixed behind everything, so the whole demo happens on one continuous
+   photographic ground. Only opacity animates, which keeps it cheap.
+══════════════════════════════════════════════════════════════════ */
+const BACKDROPS = [
+  { src: '/run-mountain.jpg', pos: 'center 40%' },
+  { src: '/run-bridge.jpg',   pos: 'center 35%' },
+  { src: '/run-lake.jpg',     pos: 'center 50%' },
+]
+
+export function PhotoBackdrop() {
+  const { scrollYProgress } = useScroll()
+  // Each image owns a stretch of the page and crossfades into the next
+  const o1 = useTransform(scrollYProgress, [0, 0.30, 0.42], [1, 1, 0])
+  const o2 = useTransform(scrollYProgress, [0.30, 0.42, 0.66, 0.78], [0, 1, 1, 0])
+  const o3 = useTransform(scrollYProgress, [0.66, 0.78, 1], [0, 1, 1])
+  const ops = [o1, o2, o3]
+
+  return (
+    <div aria-hidden="true" style={{ position:'fixed',inset:0,zIndex:0,overflow:'hidden',background:C.night }}>
+      {BACKDROPS.map((b, i) => (
+        <motion.div key={b.src}
+          style={{ position:'absolute',inset:0,opacity:ops[i],
+            backgroundImage:`url(${b.src})`,backgroundSize:'cover',
+            backgroundPosition:b.pos,backgroundRepeat:'no-repeat' }} />
+      ))}
+      {/* Brand wash so the photography reads as Jeani rather than stock */}
+      <div style={{ position:'absolute',inset:0,background:`${C.navy}59` }} />
+      <Grain op={0.09} />
+    </div>
+  )
+}
+
+/* A scrim laid over the backdrop by content sections, so copy stays
+   readable. Interludes pass a lighter strength to let the photo through. */
+export const Scrim = ({ strength = 'full' }) => {
+  const map = {
+    full:  'linear-gradient(180deg, rgba(5,6,15,0.82) 0%, rgba(5,6,15,0.74) 50%, rgba(5,6,15,0.82) 100%)',
+    mid:   'linear-gradient(180deg, rgba(5,6,15,0.62) 0%, rgba(5,6,15,0.5) 50%, rgba(5,6,15,0.62) 100%)',
+    light: 'linear-gradient(180deg, rgba(5,6,15,0.5) 0%, rgba(5,6,15,0.22) 50%, rgba(5,6,15,0.5) 100%)',
+  }
+  return <div aria-hidden="true" style={{ position:'absolute',inset:0,zIndex:0,background:map[strength] }} />
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   LIQUID GLASS
+   Translucent fill, saturated blur of whatever is behind, a bright
+   hairline edge and a specular sheen across the top.
+══════════════════════════════════════════════════════════════════ */
+export function Glass({ children, style, pad = 22, radius = 22, tone = 'base', sheen = true }) {
+  const fill = tone === 'soft' ? C.glassFillSoft : C.glassFill
+  const edge = tone === 'soft' ? C.glassEdgeSoft : C.glassEdge
+  return (
+    <div style={{ position:'relative',overflow:'hidden',borderRadius:radius,padding:pad,
+      background:fill,backdropFilter:C.glassBlur,WebkitBackdropFilter:C.glassBlur,
+      border:`1px solid ${edge}`,
+      boxShadow:'0 18px 44px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.22)',
+      ...style }}>
+      {sheen && (
+        <div aria-hidden="true" style={{ position:'absolute',inset:0,pointerEvents:'none',zIndex:1,
+          background:'linear-gradient(160deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.03) 34%, transparent 62%)' }} />
+      )}
+      <div style={{ position:'relative',zIndex:2 }}>{children}</div>
+    </div>
+  )
+}
 
 /* ── Scroll reveal ───────────────────────────────────────────────── */
 export function Reveal({ children, delay = 0, y = 22, once = true, style }) {
@@ -48,57 +114,36 @@ export function Reveal({ children, delay = 0, y = 22, once = true, style }) {
 }
 
 /* ── Editorial type ──────────────────────────────────────────────── */
-export const Eyebrow = ({ children, color = C.navy, style }) => (
+export const Eyebrow = ({ children, color = C.sand, style }) => (
   <div style={{ fontFamily:F.body,fontSize:11,fontWeight:700,letterSpacing:2.8,
     textTransform:'uppercase',color,...style }}>{children}</div>
 )
 
-export const Display = ({ children, size = 'clamp(34px, 4.6vw, 68px)', color = C.navy, style }) => (
-  <h2 style={{ fontFamily:F.display,fontWeight:700,fontSize:size,lineHeight:1.03,
-    letterSpacing:'-0.03em',color,...style }}>{children}</h2>
+export const Display = ({ children, size = 'clamp(30px, 3.9vw, 56px)', color = C.text, style }) => (
+  <h2 style={{ fontFamily:F.display,fontWeight:700,fontSize:size,lineHeight:1.06,
+    letterSpacing:'-0.03em',color,textShadow:'0 2px 24px rgba(0,0,0,0.4)',...style }}>{children}</h2>
 )
 
-export const Lede = ({ children, color = C.inkSoft, style }) => (
-  <p style={{ fontFamily:F.body,fontSize:'clamp(15px, 1.15vw, 17.5px)',lineHeight:1.62,
-    color,maxWidth:'46ch',...style }}>{children}</p>
+export const Lede = ({ children, color = C.textSoft, style }) => (
+  <p style={{ fontFamily:F.body,fontSize:'clamp(15px, 1.15vw, 17.5px)',lineHeight:1.66,
+    color,maxWidth:'52ch',textShadow:'0 1px 12px rgba(0,0,0,0.35)',...style }}>{children}</p>
 )
 
-/* A short caps label with a hairline, used to open a chapter */
-export const ChapterMark = ({ n, children, color = C.navy }) => (
-  <div style={{ display:'flex',alignItems:'center',gap:12,marginBottom:18 }}>
-    <span style={{ fontFamily:F.display,fontSize:12,fontWeight:700,color,opacity:0.55 }}>{n}</span>
-    <span style={{ width:28,height:1,background:color,opacity:0.3 }} />
+/* Chapter number, rule and label: the demo's step marker */
+export const ChapterMark = ({ n, children, color = C.sand }) => (
+  <div style={{ display:'flex',alignItems:'center',gap:12,marginBottom:16 }}>
+    <span style={{ fontFamily:F.display,fontSize:12,fontWeight:700,color,opacity:0.75 }}>{n}</span>
+    <span style={{ width:26,height:1,background:color,opacity:0.4 }} />
     <Eyebrow color={color}>{children}</Eyebrow>
   </div>
 )
 
-/* ── DataPanel ──────────────────────────────────────────────────────
-   Anything showing real app numbers sits on one of these. Keeping the
-   product's own dark UI inside a dark panel is what stops the paper page
-   from looking like a generic light marketing template. */
-export const DataPanel = ({ children, style, pad = 24, radius = 24 }) => (
-  <div style={{ position:'relative',overflow:'hidden',borderRadius:radius,padding:pad,
-    background:`linear-gradient(165deg, ${C.navyDeep} 0%, #070c26 55%, ${C.night} 100%)`,
-    boxShadow:'0 24px 60px rgba(17,35,120,0.22)', ...style }}>
-    <Grain op={0.09} z={1} />
-    <div style={{ position:'relative',zIndex:2 }}>{children}</div>
-  </div>
-)
-
-/* A light card, for copy and lists that stay on paper */
-export const Card = ({ children, style, pad = 24, radius = 20 }) => (
-  <div style={{ background:'rgba(255,255,255,0.55)',border:`1px solid ${C.line}`,
-    borderRadius:radius,padding:pad,position:'relative',...style }}>
-    {children}
-  </div>
-)
-
 /* ── Section wrapper ─────────────────────────────────────────────── */
-export function Chapter({ id, children, style, tone = 'paper' }) {
-  const bg = tone === 'deep' ? C.paperDeep : tone === 'none' ? 'transparent' : C.paper
+export function Chapter({ id, children, style, scrim = 'full' }) {
   return (
-    <section id={id} style={{ position:'relative',width:'100%',background:bg,...style }}>
-      {children}
+    <section id={id} style={{ position:'relative',width:'100%',...style }}>
+      <Scrim strength={scrim} />
+      <div style={{ position:'relative',zIndex:2 }}>{children}</div>
     </section>
   )
 }

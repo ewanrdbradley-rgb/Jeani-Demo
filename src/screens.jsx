@@ -16,7 +16,7 @@ export function Phone({ children, width = 300, style }) {
   const h = width * 2.06
   return (
     <div style={{ width,height:h,borderRadius:width*0.155,background:'#06080f',position:'relative',flexShrink:0,
-      boxShadow:`0 30px 70px rgba(17,35,120,0.3), 0 6px 18px rgba(17,35,120,0.14), 0 0 0 1px rgba(17,35,120,0.16)`,
+      boxShadow:`0 40px 90px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.18)`,
       ...style }}>
       {/* Side buttons */}
       <div style={{ position:'absolute',left:-3,top:'17%',width:3,height:'5%',background:'rgba(255,255,255,0.15)',borderRadius:'2px 0 0 2px' }} />
@@ -70,8 +70,10 @@ export function SignalGrid({ compact = false }) {
               animate={inView ? { opacity:1, y:0 } : {}}
               transition={{ delay: i * 0.08, duration: 0.55, ease: EASE }}
               style={{ textAlign:'left',cursor:'pointer',padding:compact ? '12px 14px' : '16px 18px',
-                borderRadius:16,border:`1px solid ${on ? `${col}88` : 'rgba(214,228,255,0.14)'}`,
-                background: on ? `${col}14` : 'rgba(140,160,220,0.07)',
+                borderRadius:16,border:`1px solid ${on ? `${col}99` : C.glassEdgeSoft}`,
+                background: on ? `${col}1f` : C.glassFillSoft,
+                backdropFilter:C.glassBlur,WebkitBackdropFilter:C.glassBlur,
+                boxShadow:'inset 0 1px 0 rgba(255,255,255,0.16)',
                 transition:'background 0.25s, border-color 0.25s' }}>
               <div style={{ display:'flex',alignItems:'baseline',justifyContent:'space-between',marginBottom:9 }}>
                 <span style={{ fontFamily:F.body,fontSize:compact ? 13 : 15,fontWeight:600,
@@ -236,10 +238,6 @@ export function RadarPlot({ size = 260, interactive = true, showLabels = true })
             <stop offset="0%" stopColor={C.ice} stopOpacity="0.5" />
             <stop offset="100%" stopColor={C.electric} stopOpacity="0.22" />
           </radialGradient>
-          <linearGradient id="sweep" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor={C.electric} stopOpacity="0.34" />
-            <stop offset="100%" stopColor={C.electric} stopOpacity="0" />
-          </linearGradient>
         </defs>
 
         {/* Graticule */}
@@ -252,15 +250,6 @@ export function RadarPlot({ size = 260, interactive = true, showLabels = true })
           return <line key={j.key} x1={cx} y1={cy} x2={p.x} y2={p.y}
             stroke="rgba(214,228,255,0.18)" strokeWidth="0.8" />
         })}
-
-        {/* Sweep */}
-        {inView && (
-          <motion.g animate={{ rotate:360 }} transition={{ duration:6, repeat:Infinity, ease:'linear' }}
-            style={{ originX:`${cx}px`, originY:`${cy}px` }}>
-            <path d={`M${cx},${cy} L${cx + R},${cy - R * 0.34} A${R},${R} 0 0,1 ${cx + R},${cy + R * 0.34} Z`}
-              fill="url(#sweep)" />
-          </motion.g>
-        )}
 
         {/* Load shape */}
         <motion.polygon points={poly} fill="url(#radarfill)" stroke={C.ice} strokeWidth="2"

@@ -1,16 +1,16 @@
 /* ══════════════════════════════════════════════════════════════════
-   CHAPTERS: the scroll narrative.
+   CHAPTERS: the walkthrough.
 
-   Paper ground throughout. Dark appears in exactly two forms: full-bleed
-   photography between chapters, and the DataPanel wrapping anything that
-   shows real app numbers. Copy is one headline and one supporting line
-   per panel; the screens and the numbers carry the rest.
+   The demo steps through the app one feature at a time. Every headline
+   states plainly what the feature does; the supporting line says what
+   the number or screen actually means. Nothing here should need
+   decoding.
 ══════════════════════════════════════════════════════════════════ */
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
 import {
   Grain, Reveal, Eyebrow, Display, Lede, ChapterMark,
-  DataPanel, Card, Chapter, useIsMobile,
+  Glass, Chapter, Scrim, useIsMobile,
 } from './brand.jsx'
 import { C, F, EASE, JOINTS, APP_STORE_URL } from './tokens.js'
 import {
@@ -37,14 +37,14 @@ function Panel({ index, onActive, children, first = false }) {
 }
 
 /* ── Pinned-visual chapter layout ────────────────────────────────── */
-function PinnedChapter({ id, visuals, panels, visualSide = 'left', tone = 'paper' }) {
+function PinnedChapter({ id, visuals, panels, visualSide = 'left' }) {
   const [active, setActive] = useState(0)
   const mobile = useIsMobile()
   const onActive = useCallback(i => setActive(i), [])
 
   if (mobile) {
     return (
-      <Chapter id={id} tone={tone}>
+      <Chapter id={id}>
         <div style={{ padding:'0 22px' }}>
           {panels.map((p, i) => (
             <div key={i} style={{ paddingTop: i === 0 ? '10vh' : '6vh',paddingBottom:'2vh' }}>
@@ -88,7 +88,7 @@ function PinnedChapter({ id, visuals, panels, visualSide = 'left', tone = 'paper
   )
 
   return (
-    <Chapter id={id} tone={tone}>
+    <Chapter id={id}>
       <div style={{ display:'grid',gridTemplateColumns:'minmax(360px, 0.85fr) 1.15fr',
         maxWidth:1440,margin:'0 auto' }}>
         {visualSide === 'left' ? <>{visualCol}{panelCol}</> : <>{panelCol}{visualCol}</>}
@@ -98,39 +98,26 @@ function PinnedChapter({ id, visuals, panels, visualSide = 'left', tone = 'paper
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   INTERLUDE: full-bleed photograph, the dark beat between chapters.
-   Headline only. The captions that used to sit here were the wordiest
-   part of the page and said the least.
+   INTERLUDE: the scrim thins so the backdrop photograph reads clearly,
+   carrying one plain statement between chapters.
 ══════════════════════════════════════════════════════════════════ */
-function Interlude({ image, pos = 'center 45%', eyebrow, line, italic, align = 'left' }) {
-  const ref = useRef(null)
+function Interlude({ eyebrow, line, align = 'left' }) {
   const mobile = useIsMobile()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['-8%', '8%'])
-
   return (
-    <section ref={ref} style={{ position:'relative',width:'100%',overflow:'hidden',
-      height: mobile ? '52vh' : 'min(56vh, 500px)',minHeight: mobile ? 300 : 380 }}>
-      <motion.img src={image} alt="" aria-hidden="true"
-        style={{ position:'absolute',left:0,right:0,top:'-8%',height:'116%',width:'100%',
-          objectFit:'cover',objectPosition:pos,y }} />
-      <div style={{ position:'absolute',inset:0,background:`${C.navy}4d` }} />
-      <div style={{ position:'absolute',inset:0,
-        background: align === 'center'
-          ? 'radial-gradient(ellipse 70% 80% at 50% 50%, rgba(5,6,15,0.55) 0%, rgba(5,6,15,0.15) 100%)'
-          : 'linear-gradient(90deg, rgba(5,6,15,0.72) 0%, rgba(5,6,15,0.2) 55%, transparent 88%)' }} />
-      <Grain op={0.08} />
-
-      <div style={{ position:'relative',zIndex:6,height:'100%',display:'flex',flexDirection:'column',
+    <section style={{ position:'relative',width:'100%',
+      height: mobile ? '46vh' : 'min(48vh, 420px)',minHeight: mobile ? 270 : 330 }}>
+      <Scrim strength="light" />
+      <div style={{ position:'relative',zIndex:2,height:'100%',display:'flex',flexDirection:'column',
         alignItems: align === 'center' ? 'center' : 'flex-start',justifyContent:'center',
         textAlign: align === 'center' ? 'center' : 'left',
         padding: mobile ? '0 22px' : '0 6vw',maxWidth:1440,margin:'0 auto' }}>
         <Reveal>
-          <Eyebrow color={C.sand}>{eyebrow}</Eyebrow>
-          <div style={{ fontFamily:F.display,fontWeight:700,fontSize:'clamp(26px, 3.2vw, 50px)',
-            lineHeight:1.06,letterSpacing:'-0.028em',color:'#fff',marginTop:12,
-            maxWidth: align === 'center' ? '22ch' : '17ch' }}>
-            {line}{italic && <> <span style={{ fontStyle:'italic',color:C.sand }}>{italic}</span></>}
+          <Eyebrow>{eyebrow}</Eyebrow>
+          <div style={{ fontFamily:F.display,fontWeight:700,fontSize:'clamp(24px, 3vw, 46px)',
+            lineHeight:1.08,letterSpacing:'-0.028em',color:'#fff',marginTop:12,
+            maxWidth: align === 'center' ? '24ch' : '20ch',
+            textShadow:'0 2px 26px rgba(0,0,0,0.55)' }}>
+            {line}
           </div>
         </Reveal>
       </div>
@@ -139,21 +126,18 @@ function Interlude({ image, pos = 'center 45%', eyebrow, line, italic, align = '
 }
 
 export const InterludeLab = () => (
-  <Interlude image="/run-mountain.jpg" pos="center 42%"
-    eyebrow="Measured where you move"
-    line="No lab, no force plate," italic="no appointment." />
+  <Interlude eyebrow="Where the data comes from"
+    line="Measured on the run, not in a lab." />
 )
 
 export const InterludeEarly = () => (
-  <Interlude image="/run-bridge.jpg" pos="center 38%" align="center"
-    eyebrow="Before it hurts"
-    line="Injuries show up in the data" italic="weeks before you feel them." />
+  <Interlude align="center" eyebrow="Why it matters"
+    line="Most injuries build for weeks before you feel them." />
 )
 
 export const InterludeMorning = () => (
-  <Interlude image="/run-lake.jpg" pos="center 52%"
-    eyebrow="Every morning"
-    line="One number, and one thing" italic="to do about it." />
+  <Interlude eyebrow="Every morning"
+    line="One number, and one thing to do about it." />
 )
 
 /* ══════════════════════════════════════════════════════════════════
@@ -162,79 +146,74 @@ export const InterludeMorning = () => (
 export function Hero() {
   const mobile = useIsMobile()
   return (
-    <section id="top" style={{ position:'relative',width:'100%',background:C.paper,
-      paddingTop: mobile ? 96 : 132,paddingBottom: mobile ? 56 : 96 }}>
-      <div style={{ maxWidth:1440,margin:'0 auto',padding: mobile ? '0 22px' : '0 6vw',
-        display:'grid',gridTemplateColumns: mobile ? '1fr' : '1.02fr 0.98fr',
-        gap: mobile ? 40 : 64,alignItems:'center' }}>
+    <section id="top" style={{ position:'relative',width:'100%',overflow:'hidden',
+      minHeight: mobile ? '92vh' : '100vh',display:'flex',alignItems:'center' }}>
+      <video autoPlay muted loop playsInline poster="/hero-motion3.jpg"
+        style={{ position:'absolute',inset:0,width:'100%',height:'100%',
+          objectFit:'cover',objectPosition:'center 62%' }}>
+        <source src="/vid-intro-main.mp4" type="video/mp4" />
+      </video>
+      <div style={{ position:'absolute',inset:0,background:`${C.navy}5c` }} />
+      <div style={{ position:'absolute',inset:0,
+        background:'linear-gradient(100deg, rgba(5,6,15,0.86) 0%, rgba(5,6,15,0.55) 46%, rgba(5,6,15,0.3) 100%)' }} />
+      <Grain op={0.09} />
 
-        <div>
-          <motion.div initial={{ opacity:0, y:14 }} animate={{ opacity:1, y:0 }}
-            transition={{ duration:0.7, ease:EASE }}>
-            <Eyebrow>Movement is Medicine</Eyebrow>
-          </motion.div>
+      <div style={{ position:'relative',zIndex:6,width:'100%',maxWidth:1440,margin:'0 auto',
+        padding: mobile ? '110px 22px 64px' : '120px 6vw 80px' }}>
+        <motion.div initial={{ opacity:0, y:14 }} animate={{ opacity:1, y:0 }}
+          transition={{ duration:0.7, ease:EASE }}>
+          <Eyebrow>Product walkthrough</Eyebrow>
+        </motion.div>
 
-          <motion.h1
-            initial={{ opacity:0, y:18 }} animate={{ opacity:1, y:0 }}
-            transition={{ delay:0.08, duration:0.85, ease:EASE }}
-            style={{ fontFamily:F.display,fontWeight:700,fontSize:'clamp(40px, 5.6vw, 84px)',
-              lineHeight:0.99,letterSpacing:'-0.038em',color:C.navy,marginTop:18,maxWidth:'13ch' }}>
-            Not just how much you move.
-            <span style={{ fontStyle:'italic',color:C.blueInk }}> How well.</span>
-          </motion.h1>
+        <motion.h1
+          initial={{ opacity:0, y:18 }} animate={{ opacity:1, y:0 }}
+          transition={{ delay:0.08, duration:0.85, ease:EASE }}
+          style={{ fontFamily:F.display,fontWeight:700,fontSize:'clamp(38px, 5.4vw, 80px)',
+            lineHeight:1.0,letterSpacing:'-0.038em',color:'#fff',marginTop:16,maxWidth:'14ch',
+            textShadow:'0 3px 34px rgba(0,0,0,0.5)' }}>
+          Not just how much you move.
+          <span style={{ fontStyle:'italic',color:C.sand }}> How well.</span>
+        </motion.h1>
 
-          <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }}
-            transition={{ delay:0.28, duration:0.8 }}>
-            <Lede style={{ marginTop:22,fontSize:'clamp(16px,1.3vw,19px)' }}>
-              One score for movement quality, read from the watch already on your wrist.
-            </Lede>
+        <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }}
+          transition={{ delay:0.28, duration:0.8 }}>
+          <Lede style={{ marginTop:20,fontSize:'clamp(16px,1.3vw,19px)' }}>
+            This is a walkthrough of the Jeani app, feature by feature: what each screen
+            shows you, and what it tells you about how your body is moving.
+          </Lede>
 
-            <div style={{ display:'flex',gap:12,marginTop:30,flexWrap:'wrap' }}>
-              <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer"
-                style={{ display:'inline-flex',alignItems:'center',gap:9,padding:'14px 26px',
-                  borderRadius:14,background:C.navy,color:C.paper,textDecoration:'none',
-                  fontFamily:F.body,fontSize:15,fontWeight:700 }}>
-                <svg width="15" height="18" viewBox="0 0 24 24" fill={C.paper} aria-hidden="true">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-                Start free trial
-              </a>
-              <a href="#motion"
-                style={{ display:'inline-flex',alignItems:'center',padding:'14px 24px',borderRadius:14,
-                  border:`1px solid ${C.line}`,color:C.navy,textDecoration:'none',
-                  fontFamily:F.body,fontSize:15,fontWeight:600 }}>
-                See how it works
-              </a>
-            </div>
+          <div style={{ display:'flex',gap:12,marginTop:28,flexWrap:'wrap' }}>
+            <a href="#motion"
+              style={{ display:'inline-flex',alignItems:'center',gap:9,padding:'14px 26px',
+                borderRadius:14,background:C.sand,color:C.navy,textDecoration:'none',
+                fontFamily:F.body,fontSize:15,fontWeight:700 }}>
+              Start the walkthrough
+            </a>
+            <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer"
+              style={{ display:'inline-flex',alignItems:'center',gap:9,padding:'14px 24px',
+                borderRadius:14,border:`1px solid ${C.glassEdge}`,background:C.glassFill,
+                backdropFilter:C.glassBlur,WebkitBackdropFilter:C.glassBlur,
+                color:'#fff',textDecoration:'none',fontFamily:F.body,fontSize:15,fontWeight:600 }}>
+              <svg width="14" height="17" viewBox="0 0 24 24" fill="#fff" aria-hidden="true">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+              </svg>
+              Get the app
+            </a>
+          </div>
 
-            <div style={{ display:'grid',gridTemplateColumns:'repeat(3, 1fr)',
-              gap: mobile ? 10 : 28,marginTop:38,maxWidth:440 }}>
+          <Glass pad={mobile ? 16 : 20} radius={18}
+            style={{ marginTop:34,display:'inline-block',maxWidth:mobile ? '100%' : 480 }}>
+            <div style={{ display:'grid',gridTemplateColumns:'repeat(3, 1fr)',gap: mobile ? 10 : 30 }}>
               {[['6', 'signals'], ['1', 'sensor'], ['0', 'extra kit']].map(([n, l]) => (
                 <div key={l}>
-                  <div style={{ fontFamily:F.display,fontSize: mobile ? 30 : 38,fontWeight:700,
-                    color:C.navy,lineHeight:1 }}>{n}</div>
-                  <div style={{ fontFamily:F.body,fontSize: mobile ? 10 : 11.5,letterSpacing:1.4,
-                    textTransform:'uppercase',color:C.inkMute,marginTop:5 }}>{l}</div>
+                  <div style={{ fontFamily:F.display,fontSize: mobile ? 26 : 32,fontWeight:700,
+                    color:'#fff',lineHeight:1 }}>{n}</div>
+                  <div style={{ fontFamily:F.body,fontSize: mobile ? 9.5 : 11,letterSpacing:1.4,
+                    textTransform:'uppercase',color:C.textMute,marginTop:4 }}>{l}</div>
                 </div>
               ))}
             </div>
-          </motion.div>
-        </div>
-
-        {/* The one dark object on the opening screen */}
-        <motion.div
-          initial={{ opacity:0, y:26, scale:0.98 }} animate={{ opacity:1, y:0, scale:1 }}
-          transition={{ delay:0.15, duration:0.9, ease:EASE }}
-          style={{ position:'relative',borderRadius:26,overflow:'hidden',
-            aspectRatio: mobile ? '4 / 3' : '4 / 4.6',
-            boxShadow:'0 30px 70px rgba(17,35,120,0.26)' }}>
-          <video autoPlay muted loop playsInline poster="/hero-motion3.jpg"
-            style={{ position:'absolute',inset:0,width:'100%',height:'100%',
-              objectFit:'cover',objectPosition:'center 62%' }}>
-            <source src="/vid-intro-main.mp4" type="video/mp4" />
-          </video>
-          <div style={{ position:'absolute',inset:0,background:`${C.navy}3d` }} />
-          <Grain op={0.08} />
+          </Glass>
         </motion.div>
       </div>
     </section>
@@ -258,40 +237,44 @@ export function MotionChapter() {
       panels={[
         <>
           <ChapterMark n="01">Motion</ChapterMark>
-          <Display>One number for<br /><span style={{ fontStyle:'italic',color:C.blueInk }}>movement quality.</span></Display>
-          <Lede style={{ marginTop:20 }}>
-            Step counts say you moved. Motion says how well, on a single 0 to 100 scale.
+          <Display>Your movement quality, scored out of 100.</Display>
+          <Lede style={{ marginTop:18 }}>
+            Every night Jeani rebuilds one number from six readings of how you actually moved.
+            You open the app in the morning and know whether to push or hold back.
           </Lede>
-          <div style={{ display:'flex',alignItems:'baseline',gap:16,marginTop:34 }}>
-            <span style={{ fontFamily:F.display,fontSize: mobile ? 68 : 84,fontWeight:700,
-              color:C.navy,lineHeight:0.85,letterSpacing:'-0.04em' }}>72</span>
-            <div>
-              <div style={{ fontFamily:F.body,fontSize:11,letterSpacing:2,
-                textTransform:'uppercase',color:C.inkMute }}>Today</div>
-              <div style={{ fontFamily:F.display,fontSize:18,fontWeight:600,
-                color:C.greenInk,marginTop:3 }}>Strong day</div>
+          <Glass pad={18} radius={18} style={{ marginTop:26,display:'inline-block' }}>
+            <div style={{ display:'flex',alignItems:'center',gap:16 }}>
+              <span style={{ fontFamily:F.display,fontSize: mobile ? 52 : 62,fontWeight:700,
+                color:C.ice,lineHeight:0.85,letterSpacing:'-0.04em' }}>72</span>
+              <div>
+                <div style={{ fontFamily:F.body,fontSize:10.5,letterSpacing:2,
+                  textTransform:'uppercase',color:C.textMute }}>Today</div>
+                <div style={{ fontFamily:F.display,fontSize:17,fontWeight:600,
+                  color:C.green,marginTop:3 }}>Strong day</div>
+              </div>
             </div>
-          </div>
+          </Glass>
         </>,
         <>
-          <Eyebrow>The six signals</Eyebrow>
-          <Display size="clamp(28px, 3vw, 44px)" style={{ marginTop:12,marginBottom:14 }}>
-            Six readings, blended nightly.
+          <Eyebrow>What goes into the score</Eyebrow>
+          <Display size="clamp(26px, 2.9vw, 42px)" style={{ marginTop:12,marginBottom:14 }}>
+            Six signals, all measured from your wrist.
           </Display>
-          <Lede style={{ marginBottom:24 }}>
-            Each answers a different question about your gait. Tap one to see what it measures.
+          <Lede style={{ marginBottom:22 }}>
+            Each one tracks a different part of your gait. Tap any signal to see what it measures.
           </Lede>
-          <DataPanel pad={mobile ? 18 : 24}><SignalGrid /></DataPanel>
+          <SignalGrid />
         </>,
         <>
-          <Eyebrow>Movement today</Eyebrow>
-          <Display size="clamp(28px, 3vw, 44px)" style={{ marginTop:12,marginBottom:14 }}>
-            The shape of your day.
+          <Eyebrow>Movement through the day</Eyebrow>
+          <Display size="clamp(26px, 2.9vw, 42px)" style={{ marginTop:12,marginBottom:14 }}>
+            When you moved, and how hard.
           </Display>
-          <Lede style={{ marginBottom:24 }}>
-            A hard morning and a still afternoon are two different days, not one average.
+          <Lede style={{ marginBottom:22 }}>
+            Jeani plots every hour, so a hard morning followed by a still afternoon does not
+            average out into a meaningless number.
           </Lede>
-          <DataPanel pad={mobile ? 18 : 24}><MovementToday /></DataPanel>
+          <Glass pad={mobile ? 18 : 24}><MovementToday /></Glass>
         </>,
       ]}
     />
@@ -311,29 +294,31 @@ export function RadarChapter() {
       visualSide="right"
       visuals={[
         <Phone key="a" width={mobile ? 268 : 300}><RadarScreen /></Phone>,
-        <DataPanel key="b" pad={mobile ? 20 : 30} radius={28} style={{ width: mobile ? '100%' : 380 }}>
+        <Glass key="b" pad={mobile ? 20 : 28} radius={26} style={{ width: mobile ? '100%' : 372 }}>
           <div style={{ display:'flex',justifyContent:'center' }}>
-            <RadarPlot size={mobile ? 260 : 300} />
+            <RadarPlot size={mobile ? 258 : 296} />
           </div>
-          <div style={{ marginTop:22,display:'flex',justifyContent:'center' }}><RadarLegend /></div>
-        </DataPanel>,
+          <div style={{ marginTop:20,display:'flex',justifyContent:'center' }}><RadarLegend /></div>
+        </Glass>,
         <Phone key="c" width={mobile ? 268 : 300}><RadarScreen /></Phone>,
       ]}
       panels={[
         <>
           <ChapterMark n="02">Injury Radar</ChapterMark>
-          <Display>See the load,<br /><span style={{ fontStyle:'italic',color:C.blueInk }}>before injury.</span></Display>
-          <Lede style={{ marginTop:20 }}>
-            Strain across six joints, hip to ankle, on both sides at once.
+          <Display>Strain on each joint, before it becomes an injury.</Display>
+          <Lede style={{ marginTop:18 }}>
+            Jeani estimates how much load your hips, knees and ankles are each carrying, left
+            and right, and flags any joint that starts taking more than its share.
           </Lede>
         </>,
         <>
-          <Eyebrow>Six joints, both sides</Eyebrow>
-          <Display size="clamp(28px, 3vw, 44px)" style={{ marginTop:12,marginBottom:14 }}>
-            Asymmetry shows up as a dent.
+          <Eyebrow>Reading the radar</Eyebrow>
+          <Display size="clamp(26px, 2.9vw, 42px)" style={{ marginTop:12,marginBottom:14 }}>
+            Every joint scored, left against right.
           </Display>
-          <Lede style={{ marginBottom:24 }}>
-            A balanced week draws an even hexagon. Jeani flags the corner that pulls in.
+          <Lede style={{ marginBottom:22 }}>
+            A balanced week fills the shape evenly. When one side works harder than the other
+            its score drops, that corner pulls in, and Jeani marks the joint to watch.
           </Lede>
           <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(148px,1fr))',gap:9 }}>
             {JOINTS.map((j, i) => {
@@ -344,42 +329,45 @@ export function RadarChapter() {
                   transition={{ delay:i * 0.05, duration:0.4, ease:EASE }}
                   onMouseEnter={() => setProbe(j.key)} onMouseLeave={() => setProbe(null)}
                   style={{ display:'flex',alignItems:'center',justifyContent:'space-between',
-                    padding:'11px 14px',borderRadius:12,
-                    border:`1px solid ${watch ? `${C.amberInk}66` : C.line}`,
-                    background: probe === j.key ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.45)',
+                    padding:'11px 14px',borderRadius:13,
+                    border:`1px solid ${watch ? `${C.amber}88` : C.glassEdgeSoft}`,
+                    background: probe === j.key ? 'rgba(255,255,255,0.16)' : C.glassFillSoft,
+                    backdropFilter:C.glassBlur,WebkitBackdropFilter:C.glassBlur,
+                    boxShadow:'inset 0 1px 0 rgba(255,255,255,0.14)',
                     transition:'background 0.2s' }}>
                   <span style={{ display:'flex',alignItems:'center',gap:9 }}>
                     <span style={{ width:6,height:6,borderRadius:'50%',
-                      background: watch ? C.amberInk : C.blueInk }} />
-                    <span style={{ fontFamily:F.body,fontSize:13.5,color:C.ink }}>{j.label}</span>
+                      background: watch ? C.amber : C.electric }} />
+                    <span style={{ fontFamily:F.body,fontSize:13.5,color:C.textSoft }}>{j.label}</span>
                   </span>
                   <span style={{ fontFamily:F.display,fontSize:18,fontWeight:700,
-                    color: watch ? C.amberInk : C.navy }}>{j.value}</span>
+                    color: watch ? C.amber : C.ice }}>{j.value}</span>
                 </motion.div>
               )
             })}
           </div>
         </>,
         <>
-          <Eyebrow>Fatigue and recovery</Eyebrow>
-          <Display size="clamp(28px, 3vw, 44px)" style={{ marginTop:12,marginBottom:14 }}>
-            Know what to fix this week.
+          <Eyebrow>Whole-body load</Eyebrow>
+          <Display size="clamp(26px, 2.9vw, 42px)" style={{ marginTop:12,marginBottom:14 }}>
+            Fatigue and recovery, side by side.
           </Display>
-          <Lede style={{ marginBottom:24 }}>
-            Two whole-body readings tell rest apart from work.
+          <Lede style={{ marginBottom:22 }}>
+            Fatigue is the strain you have built up. Recovery is how ready you are to train
+            again. Read together, they tell rest apart from work.
           </Lede>
           <div style={{ display:'flex',gap:12,flexWrap:'wrap' }}>
-            {[['Fatigue', 24, 'Accumulated strain. Lower is better.', C.greenInk],
-              ['Recovery', 71, 'How ready you are to load again.', C.blueInk]].map(([k, v, note, col]) => (
-              <Card key={k} pad={20} style={{ flex:'1 1 200px' }}>
+            {[['Fatigue', 24, 'Strain carried into today. Lower is better.', C.green],
+              ['Recovery', 71, 'How ready you are to load again.', C.electric]].map(([k, v, note, col]) => (
+              <Glass key={k} pad={20} radius={18} tone="soft" style={{ flex:'1 1 200px' }}>
                 <div style={{ fontFamily:F.body,fontSize:10.5,letterSpacing:2,
-                  textTransform:'uppercase',color:C.inkMute }}>{k}</div>
-                <div style={{ fontFamily:F.display,fontSize:46,fontWeight:700,color:col,
+                  textTransform:'uppercase',color:C.textMute }}>{k}</div>
+                <div style={{ fontFamily:F.display,fontSize:44,fontWeight:700,color:col,
                   lineHeight:0.95,marginTop:6,letterSpacing:'-0.03em' }}>{v}</div>
-                <div style={{ fontFamily:F.body,fontSize:12.5,color:C.inkSoft,marginTop:8,lineHeight:1.5 }}>
+                <div style={{ fontFamily:F.body,fontSize:12.5,color:C.textSoft,marginTop:8,lineHeight:1.5 }}>
                   {note}
                 </div>
-              </Card>
+              </Glass>
             ))}
           </div>
         </>,
@@ -399,7 +387,6 @@ export function SpotlightChapter() {
     <PinnedChapter
       id="spotlight"
       visualSide="left"
-      tone="deep"
       visuals={[
         <Phone key="a" width={mobile ? 268 : 300}><Shot src="/screenshots/spotlight.jpg" alt="Spotlight screen" /></Phone>,
         <Phone key="b" width={mobile ? 268 : 300}><Shot src="/screenshots/spotlight.jpg" alt="Spotlight detail" /></Phone>,
@@ -408,26 +395,31 @@ export function SpotlightChapter() {
       panels={[
         <>
           <ChapterMark n="03">Spotlight</ChapterMark>
-          <Display>The one thing<br /><span style={{ fontStyle:'italic',color:C.blueInk }}>worth your attention.</span></Display>
-          <Lede style={{ marginTop:20 }}>
-            Six joints and six signals, narrowed to the single area to work on this week.
+          <Display>The one area to work on this week.</Display>
+          <Lede style={{ marginTop:18 }}>
+            Rather than handing you six joints and six signals to interpret, Jeani picks the
+            single area most worth your attention and explains why it was chosen.
           </Lede>
         </>,
         <>
-          <Eyebrow>This week</Eyebrow>
-          <Display size="clamp(28px, 3vw, 44px)" style={{ marginTop:12,marginBottom:20 }}>
-            Left Hamstring.
+          <Eyebrow>This week&rsquo;s spotlight</Eyebrow>
+          <Display size="clamp(26px, 2.9vw, 42px)" style={{ marginTop:12,marginBottom:18 }}>
+            Left hamstring, and what to do about it.
           </Display>
-          <Card pad={mobile ? 20 : 26}>
+          <Lede style={{ marginBottom:20 }}>
+            Each spotlight comes with the trend that triggered it and a short set of stretches
+            aimed at that specific area.
+          </Lede>
+          <Glass pad={mobile ? 20 : 24}>
             <div style={{ display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16 }}>
               <div>
-                <div style={{ fontFamily:F.display,fontSize:22,fontWeight:700,color:C.navy }}>Left Hamstring</div>
-                <div style={{ fontFamily:F.body,fontSize:12.5,color:C.greenInk,marginTop:2 }}>Improving</div>
+                <div style={{ fontFamily:F.display,fontSize:21,fontWeight:700,color:'#fff' }}>Left Hamstring</div>
+                <div style={{ fontFamily:F.body,fontSize:12.5,color:C.green,marginTop:2 }}>Improving over 7 days</div>
               </div>
-              <div style={{ fontFamily:F.display,fontSize:30,fontWeight:700,color:C.greenInk }}>+45</div>
+              <div style={{ fontFamily:F.display,fontSize:28,fontWeight:700,color:C.green }}>+45</div>
             </div>
             <div style={{ fontFamily:F.body,fontSize:10.5,letterSpacing:2,textTransform:'uppercase',
-              color:C.inkMute,marginBottom:10 }}>Stretch it</div>
+              color:C.textMute,marginBottom:10 }}>Recommended stretches</div>
             <div style={{ display:'flex',flexDirection:'column',gap:8 }}>
               {STRETCHES.map((s, i) => (
                 <motion.div key={s}
@@ -435,21 +427,23 @@ export function SpotlightChapter() {
                   transition={{ delay:i * 0.08, duration:0.4 }}
                   style={{ display:'flex',alignItems:'center',gap:11 }}>
                   <span style={{ width:20,height:20,borderRadius:'50%',flexShrink:0,
-                    background:`${C.navy}12`,color:C.navy,fontFamily:F.body,fontSize:10.5,fontWeight:700,
+                    background:'rgba(255,255,255,0.14)',color:'#fff',fontFamily:F.body,
+                    fontSize:10.5,fontWeight:700,
                     display:'flex',alignItems:'center',justifyContent:'center' }}>{i + 1}</span>
-                  <span style={{ fontFamily:F.body,fontSize:14,color:C.ink }}>{s}</span>
+                  <span style={{ fontFamily:F.body,fontSize:14,color:C.textSoft }}>{s}</span>
                 </motion.div>
               ))}
             </div>
-          </Card>
+          </Glass>
         </>,
         <>
           <Eyebrow>Ask Jeani</Eyebrow>
-          <Display size="clamp(28px, 3vw, 44px)" style={{ marginTop:12,marginBottom:14 }}>
-            Every number, in plain words.
+          <Display size="clamp(26px, 2.9vw, 42px)" style={{ marginTop:12,marginBottom:14 }}>
+            Ask why, and get a plain answer.
           </Display>
           <Lede>
-            Answers come from your own seven days of data, not a generic training article.
+            Every score links to a chat that can explain it. Answers are drawn from your own
+            seven days of data, not from a generic training article.
           </Lede>
         </>,
       ]}
@@ -463,28 +457,30 @@ export function SpotlightChapter() {
 export function WatchInterlude() {
   const mobile = useIsMobile()
   return (
-    <Chapter id="watch">
-      <div style={{ maxWidth:1200,margin:'0 auto',padding: mobile ? '76px 22px' : '112px 6vw',
+    <Chapter id="watch" scrim="mid">
+      <div style={{ maxWidth:1200,margin:'0 auto',padding: mobile ? '76px 22px' : '108px 6vw',
         display:'grid',gridTemplateColumns: mobile ? '1fr' : '1fr 0.85fr',
-        gap: mobile ? 36 : 64,alignItems:'center' }}>
+        gap: mobile ? 36 : 60,alignItems:'center' }}>
         <Reveal>
-          <Eyebrow>Apple Watch</Eyebrow>
-          <Display size="clamp(30px, 3.8vw, 56px)" style={{ marginTop:14 }}>
-            Works with the watch<br /><span style={{ fontStyle:'italic',color:C.blueInk }}>you already own.</span>
+          <Eyebrow>What you need</Eyebrow>
+          <Display size="clamp(28px, 3.5vw, 50px)" style={{ marginTop:14 }}>
+            Works with the Apple Watch you already own.
           </Display>
-          <Lede style={{ marginTop:18 }}>
-            One wrist sensor, measured while you walk and run. No chest strap, no footpod, no lab.
+          <Lede style={{ marginTop:16 }}>
+            Jeani reads triaxial accelerometer data from your wrist while you walk and run.
+            No chest strap, no footpod, no lab visit.
           </Lede>
-          <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',
-            gap: mobile ? 10 : 26,marginTop:30,maxWidth:420 }}>
-            {[['Series 6', 'or later'], ['iOS 16', 'and up'], ['Nightly', 'rescored']].map(([a, b]) => (
-              <div key={a}>
-                <div style={{ fontFamily:F.display,fontSize: mobile ? 17 : 21,fontWeight:700,color:C.navy }}>{a}</div>
-                <div style={{ fontFamily:F.body,fontSize: mobile ? 9.5 : 11,letterSpacing:1.3,
-                  textTransform:'uppercase',color:C.inkMute,marginTop:3 }}>{b}</div>
-              </div>
-            ))}
-          </div>
+          <Glass pad={mobile ? 16 : 20} radius={18} tone="soft" style={{ marginTop:26,display:'inline-block' }}>
+            <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap: mobile ? 12 : 30 }}>
+              {[['Series 6', 'or later'], ['iOS 16', 'and up'], ['Nightly', 'rescored']].map(([a, b]) => (
+                <div key={a}>
+                  <div style={{ fontFamily:F.display,fontSize: mobile ? 16 : 20,fontWeight:700,color:'#fff' }}>{a}</div>
+                  <div style={{ fontFamily:F.body,fontSize: mobile ? 9 : 10.5,letterSpacing:1.3,
+                    textTransform:'uppercase',color:C.textMute,marginTop:3 }}>{b}</div>
+                </div>
+              ))}
+            </div>
+          </Glass>
         </Reveal>
 
         <Reveal delay={0.12} style={{ display:'flex',justifyContent:'center' }}>
@@ -494,7 +490,7 @@ export function WatchInterlude() {
             transition={{ duration:6.5, repeat:Infinity, ease:'easeInOut' }}
             /* Held near its native 454px width to stay sharp on 2x screens */
             style={{ width: mobile ? 'min(210px, 56vw)' : 'min(290px, 24vw)',height:'auto',display:'block',
-              filter:'drop-shadow(0 26px 44px rgba(17,35,120,0.3))' }} />
+              filter:'drop-shadow(0 30px 50px rgba(0,0,0,0.55))' }} />
         </Reveal>
       </div>
     </Chapter>
@@ -508,59 +504,49 @@ export function ScienceChapter() {
   const mobile = useIsMobile()
 
   const PILLARS = [
-    { n:'01', label:'Six movement signals',
+    { n:'01', label:'Six signals per day',
       sub:'Joints · Balance · Mobility · Variety · Volume · Smoothness',
-      detail:'Each is derived independently, so a drop in one is diagnostic rather than noise.' },
-    { n:'02', label:'One sensor, six joints',
-      sub:'Hip, knee and ankle, bilaterally',
-      detail:'Triaxial accelerometry and gait proxy extraction, measured in real-world conditions.' },
+      detail:'Each is derived independently from the same wrist data, so a drop in one points at a specific problem rather than general noise.' },
+    { n:'02', label:'Six joint estimates',
+      sub:'Hip, knee and ankle, left and right',
+      detail:'Triaxial accelerometry and gait proxy extraction turn one wrist sensor into per-joint load estimates, measured in real-world conditions.' },
     { n:'03', label:'Built with movement scientists',
       sub:'Amy Arundale · Jacob Rothman · Dr. Blake Boggess · Dr. Brinnae Bent',
-      detail:'Methodology consistent with published clinical and sports science research.' },
+      detail:'The methodology follows published clinical and sports science research on gait and joint loading.' },
   ]
 
   return (
-    <Chapter id="science" tone="deep">
-      <div style={{ maxWidth:1280,margin:'0 auto',padding: mobile ? '76px 22px' : '112px 6vw' }}>
+    <Chapter id="science">
+      <div style={{ maxWidth:1280,margin:'0 auto',padding: mobile ? '76px 22px' : '108px 6vw' }}>
         <div style={{ display:'grid',gridTemplateColumns: mobile ? '1fr' : '1fr 1fr',
-          gap: mobile ? 28 : 60,alignItems:'end',marginBottom: mobile ? 40 : 64 }}>
+          gap: mobile ? 26 : 56,alignItems:'end',marginBottom: mobile ? 34 : 56 }}>
           <Reveal>
             <ChapterMark n="04">The science</ChapterMark>
-            <Display>Real-world movement intelligence.</Display>
+            <Display>How the numbers are produced.</Display>
           </Reveal>
           <Reveal delay={0.1}>
             <Lede>
-              Gait analysis used to mean a lab and an appointment. Jeani derives the same measures
-              from the accelerometer you already wear.
+              Gait analysis used to mean a lab, a force plate and an appointment. Jeani derives
+              the same underlying measures from the accelerometer you already wear.
             </Lede>
-            <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap: mobile ? 10 : 28,marginTop:26 }}>
-              {[['6', 'joint estimates'], ['3', 'axes of motion'], ['0', 'extra hardware']].map(([n, l]) => (
-                <div key={l}>
-                  <div style={{ fontFamily:F.display,fontSize: mobile ? 30 : 40,fontWeight:700,
-                    color:C.navy,lineHeight:1,letterSpacing:'-0.03em' }}>{n}</div>
-                  <div style={{ fontFamily:F.body,fontSize: mobile ? 9.5 : 11,letterSpacing:1.3,
-                    textTransform:'uppercase',color:C.inkMute,marginTop:4 }}>{l}</div>
-                </div>
-              ))}
-            </div>
           </Reveal>
         </div>
 
         <div style={{ display:'grid',gridTemplateColumns: mobile ? '1fr' : 'repeat(3, 1fr)',gap:14 }}>
           {PILLARS.map((p, i) => (
             <Reveal key={p.label} delay={i * 0.1}>
-              <Card pad={mobile ? 22 : 26} style={{ height:'100%',background:'rgba(255,255,255,0.6)' }}>
-                <div style={{ fontFamily:F.display,fontSize:12,fontWeight:700,color:C.navy,
-                  opacity:0.45,marginBottom:14 }}>{p.n}</div>
-                <div style={{ fontFamily:F.display,fontSize:20,fontWeight:700,color:C.navy,
+              <Glass pad={mobile ? 22 : 26} style={{ height:'100%' }}>
+                <div style={{ fontFamily:F.display,fontSize:12,fontWeight:700,color:C.sand,
+                  opacity:0.6,marginBottom:14 }}>{p.n}</div>
+                <div style={{ fontFamily:F.display,fontSize:19,fontWeight:700,color:'#fff',
                   lineHeight:1.2,marginBottom:8,letterSpacing:'-0.02em' }}>{p.label}</div>
-                <div style={{ fontFamily:F.body,fontSize:12,color:C.inkMute,marginBottom:12,lineHeight:1.5 }}>
+                <div style={{ fontFamily:F.body,fontSize:12,color:C.textMute,marginBottom:12,lineHeight:1.5 }}>
                   {p.sub}
                 </div>
-                <div style={{ fontFamily:F.body,fontSize:14,color:C.inkSoft,lineHeight:1.6 }}>
+                <div style={{ fontFamily:F.body,fontSize:13.5,color:C.textSoft,lineHeight:1.6 }}>
                   {p.detail}
                 </div>
-              </Card>
+              </Glass>
             </Reveal>
           ))}
         </div>
@@ -577,56 +563,56 @@ export function PlansChapter() {
   const mobile = useIsMobile()
 
   const FEATURES = [
-    'Motion score, rebuilt nightly',
+    'Motion score, rebuilt every night',
     'Injury Radar across six joints',
-    'Spotlight, one area a week',
+    'Spotlight, one area each week',
     'Ask Jeani, reading your own data',
-    'Streaks and 90-day history',
+    'Streaks and 90 days of history',
     'Apple Watch, no extra hardware',
   ]
 
   const price  = billing === 'monthly' ? '$9.99' : '$99.99'
   const period = billing === 'monthly' ? '/month' : '/year'
-  const sub    = billing === 'monthly' ? null : "$8.33 a month, billed annually"
+  const sub    = billing === 'monthly' ? null : '$8.33 a month, billed annually'
 
   return (
     <Chapter id="plans">
-      <div style={{ maxWidth:1200,margin:'0 auto',padding: mobile ? '76px 22px 84px' : '112px 6vw 128px',
+      <div style={{ maxWidth:1200,margin:'0 auto',padding: mobile ? '76px 22px 84px' : '108px 6vw 124px',
         display:'grid',gridTemplateColumns: mobile ? '1fr' : '1fr 0.9fr',
-        gap: mobile ? 36 : 64,alignItems:'center' }}>
+        gap: mobile ? 34 : 60,alignItems:'center' }}>
 
         <Reveal>
           <ChapterMark n="05">Plans</ChapterMark>
-          <Display>Movement<br /><span style={{ fontStyle:'italic',color:C.blueInk }}>is Medicine.</span></Display>
-          <Lede style={{ marginTop:18 }}>
-            Two weeks free, then one plan with everything in it.
+          <Display>Try the full app free for two weeks.</Display>
+          <Lede style={{ marginTop:16 }}>
+            Everything in this walkthrough is included. One plan, no tiers, nothing held back.
           </Lede>
           <div style={{ display:'grid',gridTemplateColumns: mobile ? '1fr' : '1fr 1fr',
-            gap:'9px 18px',marginTop:28 }}>
+            gap:'9px 18px',marginTop:26 }}>
             {FEATURES.map((f, i) => (
               <motion.div key={f}
                 initial={{ opacity:0, x:-8 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }}
                 transition={{ delay:i * 0.05, duration:0.4 }}
                 style={{ display:'flex',gap:9,alignItems:'flex-start' }}>
                 <span style={{ width:17,height:17,borderRadius:'50%',flexShrink:0,marginTop:2,
-                  background:`${C.navy}14`,color:C.navy,fontSize:9,
+                  background:'rgba(255,255,255,0.16)',color:'#fff',fontSize:9,
                   display:'flex',alignItems:'center',justifyContent:'center' }}>✓</span>
-                <span style={{ fontFamily:F.body,fontSize:14,color:C.ink,lineHeight:1.45 }}>{f}</span>
+                <span style={{ fontFamily:F.body,fontSize:14,color:C.textSoft,lineHeight:1.45 }}>{f}</span>
               </motion.div>
             ))}
           </div>
         </Reveal>
 
         <Reveal delay={0.12}>
-          <div style={{ background:C.white,border:`1px solid ${C.line}`,borderRadius:26,
-            padding: mobile ? 26 : 34,boxShadow:'0 24px 60px rgba(17,35,120,0.1)' }}>
-            <div style={{ display:'inline-flex',background:`${C.navy}0d`,borderRadius:30,padding:4,marginBottom:24 }}>
+          <Glass pad={mobile ? 26 : 32} radius={26}>
+            <div style={{ display:'inline-flex',background:'rgba(255,255,255,0.1)',
+              borderRadius:30,padding:4,marginBottom:22 }}>
               {['monthly', 'annual'].map(b => (
                 <button key={b} onClick={() => setBilling(b)}
                   style={{ padding:'9px 18px',borderRadius:26,border:'none',cursor:'pointer',
                     fontFamily:F.body,fontSize:12.5,fontWeight:600,transition:'all 0.22s',
-                    background: billing === b ? C.navy : 'transparent',
-                    color: billing === b ? C.paper : C.inkSoft }}>
+                    background: billing === b ? C.sand : 'transparent',
+                    color: billing === b ? C.navy : C.textSoft }}>
                   {b === 'monthly' ? 'Monthly' : 'Annual · save 17%'}
                 </button>
               ))}
@@ -635,14 +621,14 @@ export function PlansChapter() {
             <AnimatePresence mode="wait">
               <motion.div key={billing}
                 initial={{ opacity:0, y:6 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-6 }}
-                transition={{ duration:0.2 }} style={{ marginBottom:24 }}>
+                transition={{ duration:0.2 }} style={{ marginBottom:22 }}>
                 <div style={{ display:'flex',alignItems:'baseline',gap:7 }}>
-                  <span style={{ fontFamily:F.display,fontSize:'clamp(44px,4.4vw,62px)',fontWeight:700,
-                    color:C.navy,lineHeight:1,letterSpacing:'-0.04em' }}>{price}</span>
-                  <span style={{ fontFamily:F.body,fontSize:16,color:C.inkMute }}>{period}</span>
+                  <span style={{ fontFamily:F.display,fontSize:'clamp(42px,4.2vw,58px)',fontWeight:700,
+                    color:'#fff',lineHeight:1,letterSpacing:'-0.04em' }}>{price}</span>
+                  <span style={{ fontFamily:F.body,fontSize:16,color:C.textMute }}>{period}</span>
                 </div>
-                {sub && <div style={{ fontFamily:F.body,fontSize:13,color:C.inkMute,marginTop:6 }}>{sub}</div>}
-                <div style={{ fontFamily:F.body,fontSize:13,color:C.greenInk,fontWeight:600,marginTop:8 }}>
+                {sub && <div style={{ fontFamily:F.body,fontSize:13,color:C.textMute,marginTop:6 }}>{sub}</div>}
+                <div style={{ fontFamily:F.body,fontSize:13,color:C.green,fontWeight:600,marginTop:8 }}>
                   First fourteen days free
                 </div>
               </motion.div>
@@ -650,17 +636,17 @@ export function PlansChapter() {
 
             <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer"
               style={{ display:'flex',alignItems:'center',justifyContent:'center',gap:9,width:'100%',
-                padding:'16px',borderRadius:14,background:C.navy,color:C.paper,textDecoration:'none',
+                padding:'16px',borderRadius:14,background:C.sand,color:C.navy,textDecoration:'none',
                 fontFamily:F.body,fontSize:15.5,fontWeight:700 }}>
-              <svg width="15" height="18" viewBox="0 0 24 24" fill={C.paper} aria-hidden="true">
+              <svg width="15" height="18" viewBox="0 0 24 24" fill={C.navy} aria-hidden="true">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
               </svg>
               Start your free trial
             </a>
-            <div style={{ textAlign:'center',fontFamily:F.body,fontSize:12,color:C.inkMute,marginTop:12 }}>
+            <div style={{ textAlign:'center',fontFamily:F.body,fontSize:12,color:C.textMute,marginTop:12 }}>
               Cancel any time
             </div>
-          </div>
+          </Glass>
         </Reveal>
       </div>
     </Chapter>
@@ -672,7 +658,8 @@ export function PlansChapter() {
 ══════════════════════════════════════════════════════════════════ */
 export function Footer() {
   return (
-    <footer style={{ background:C.navy,padding:'36px 6vw',position:'relative',overflow:'hidden' }}>
+    <footer style={{ position:'relative',padding:'34px 6vw',overflow:'hidden' }}>
+      <div style={{ position:'absolute',inset:0,background:'rgba(5,6,15,0.9)' }} />
       <Grain op={0.07} />
       <div style={{ position:'relative',zIndex:2,maxWidth:1200,margin:'0 auto',display:'flex',
         alignItems:'center',justifyContent:'space-between',gap:18,flexWrap:'wrap' }}>

@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useSpring } from 'framer-motion'
 import './index.css'
-import { useIsMobile } from './brand.jsx'
+import { useIsMobile, PhotoBackdrop } from './brand.jsx'
 import { C, F, APP_STORE_URL } from './tokens.js'
 import {
   Hero, MotionChapter, RadarChapter, SpotlightChapter,
@@ -65,14 +65,14 @@ function Rail() {
 
   return (
     <div style={{ position:'fixed',top:0,left:0,right:0,zIndex:90,
-      background:'rgba(247,238,221,0.9)',backdropFilter:'blur(18px)',
-      WebkitBackdropFilter:'blur(18px)',borderBottom:`1px solid ${C.line}` }}>
+      background:'rgba(5,6,15,0.5)',backdropFilter:C.glassBlur,
+      WebkitBackdropFilter:C.glassBlur,borderBottom:`1px solid ${C.glassEdgeSoft}` }}>
 
       <div style={{ height: mobile ? 52 : 58,display:'flex',alignItems:'center',
         gap:mobile ? 10 : 28,padding: mobile ? '0 18px' : '0 6vw',maxWidth:1440,margin:'0 auto' }}>
 
         <a href="#top" style={{ display:'flex',alignItems:'center',flexShrink:0 }}>
-          <img src="/logos/Jeani Wordmark Blue.png" alt="Jeani"
+          <img src="/logos/Jeani Wordmark White.png" alt="Jeani"
             style={{ height: mobile ? 17 : 20 }} />
         </a>
 
@@ -94,13 +94,13 @@ function Rail() {
                 style={{ display:'flex',alignItems:'center',gap: showLabel ? 6 : 0,
                   textDecoration:'none',flexShrink:0,
                   padding: mobile ? '6px 8px' : '7px 13px',borderRadius:18,
-                  background: on ? `${C.navy}12` : 'transparent',transition:'background 0.25s' }}>
+                  background: on ? 'rgba(255,255,255,0.14)' : 'transparent',transition:'background 0.25s' }}>
                 <span style={{ fontFamily:F.display,fontSize: mobile ? 10.5 : 11,fontWeight:700,
-                  color: on ? C.navy : C.inkMute }}>{c.n}</span>
+                  color: on ? C.sand : C.textMute }}>{c.n}</span>
                 {showLabel && (
                   <span style={{ fontFamily:F.body,fontSize: mobile ? 10 : 11.5,fontWeight: on ? 700 : 500,
                     letterSpacing: mobile ? 0.8 : 1.2,textTransform:'uppercase',whiteSpace:'nowrap',
-                    color: on ? C.navy : C.inkSoft,transition:'color 0.25s' }}>
+                    color: on ? '#fff' : C.textMute,transition:'color 0.25s' }}>
                     {c.label}
                   </span>
                 )}
@@ -111,7 +111,7 @@ function Rail() {
 
         {!mobile && (
           <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer"
-            style={{ flexShrink:0,padding:'9px 18px',borderRadius:20,background:C.navy,color:C.paper,
+            style={{ flexShrink:0,padding:'9px 18px',borderRadius:20,background:C.sand,color:C.navy,
               textDecoration:'none',fontFamily:F.body,fontSize:12.5,fontWeight:700 }}>
             Free trial
           </a>
@@ -119,14 +119,15 @@ function Rail() {
       </div>
 
       {/* Scroll progress */}
-      <motion.div style={{ height:2,background:C.navy,transformOrigin:'0%',scaleX:bar }} />
+      <motion.div style={{ height:2,background:C.sand,transformOrigin:'0%',scaleX:bar }} />
     </div>
   )
 }
 
 export default function App() {
   return (
-    <div style={{ background:C.paper,position:'relative' }}>
+    <div style={{ position:'relative',background:C.night }}>
+      <PhotoBackdrop />
       <Rail />
       <Hero />
       <MotionChapter />

@@ -8,40 +8,35 @@
    There is no cyan in the brand.
 ══════════════════════════════════════════════════════════════════ */
 
-/* The page is paper. Dark is reserved for two things: full-bleed
-   photography, and anything showing real app data (the phone, the radar,
-   the day chart). That split is the whole visual system: the site speaks in
-   navy on sand, the product speaks in its own dark UI. */
+/* The page sits on photography the whole way down: one fixed backdrop that
+   crossfades between images as you scroll. Everything else is liquid glass
+   floating on top, so the content reads as UI over the real world rather
+   than as panels on a flat colour. */
 export const C = {
-  // Grounds
-  paper:     '#F7EEDD',  // default page ground, sand lightened for large areas
-  paperDeep: '#EEE0C6',  // alternate band, for rhythm between paper sections
-  sand:      '#FBECCF',  // Sand White, brand book p.5, used on dark
+  navy:      '#112378',  // Deep Blue, brand book p.5
+  navyDeep:  '#0a1447',
+  night:     '#05060f',
+  sand:      '#FBECCF',  // Sand White, for accent phrases
   white:     '#FFFFFF',
 
-  // Ink
-  navy:      '#112378',  // Deep Blue, headlines and rules
-  navyDeep:  '#0a1447',
-  ink:       '#141A3A',  // body copy on paper, softer than pure navy
-  inkSoft:   '#5A6180',
-  inkMute:   '#9A9DB0',
-  line:      'rgba(17,35,120,0.16)',
+  // Type on the photographic ground
+  text:      '#FFFFFF',
+  textSoft:  'rgba(255,255,255,0.72)',
+  textMute:  'rgba(255,255,255,0.5)',
 
-  // Dark surfaces (photo bands, data panels, phone screens)
-  night:     '#05060f',
+  // Liquid glass
+  glassFill:      'rgba(255,255,255,0.10)',
+  glassFillSoft:  'rgba(255,255,255,0.06)',
+  glassEdge:      'rgba(255,255,255,0.22)',
+  glassEdgeSoft:  'rgba(255,255,255,0.14)',
+  glassBlur:      'blur(20px) saturate(150%)',
 
-  // In-app accent ramp, legible on the dark panels
+  // In-app accent ramp
   electric:  '#5C8DFF',
   ice:       '#D6E4FF',
   green:     '#00E87B',
   amber:     '#F5A000',
   red:       '#FF6B6B',
-
-  // The same semantics darkened enough to read on paper
-  greenInk:  '#00815A',
-  amberInk:  '#A96B00',
-  redInk:    '#C2403F',
-  blueInk:   '#2C4ED4',
 }
 
 /* Host Grotesk throughout, display and body alike. The brand book (p.4)
