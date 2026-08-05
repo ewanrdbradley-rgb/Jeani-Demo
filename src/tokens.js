@@ -8,17 +8,40 @@
    There is no cyan in the brand.
 ══════════════════════════════════════════════════════════════════ */
 
+/* The page is paper. Dark is reserved for two things: full-bleed
+   photography, and anything showing real app data (the phone, the radar,
+   the day chart). That split is the whole visual system: the site speaks in
+   navy on sand, the product speaks in its own dark UI. */
 export const C = {
-  navy:     '#112378',  // Deep Blue
-  navyDeep: '#0a1447',
-  night:    '#05060f',  // near-black ground
-  sand:     '#FBECCF',  // Sand White
-  white:    '#FFFFFF',
-  electric: '#5C8DFF',  // in-app accent
-  ice:      '#D6E4FF',  // in-app numerals
-  green:    '#00E87B',
-  amber:    '#F5A000',
-  red:      '#FF6B6B',
+  // Grounds
+  paper:     '#F7EEDD',  // default page ground, sand lightened for large areas
+  paperDeep: '#EEE0C6',  // alternate band, for rhythm between paper sections
+  sand:      '#FBECCF',  // Sand White, brand book p.5, used on dark
+  white:     '#FFFFFF',
+
+  // Ink
+  navy:      '#112378',  // Deep Blue, headlines and rules
+  navyDeep:  '#0a1447',
+  ink:       '#141A3A',  // body copy on paper, softer than pure navy
+  inkSoft:   '#5A6180',
+  inkMute:   '#9A9DB0',
+  line:      'rgba(17,35,120,0.16)',
+
+  // Dark surfaces (photo bands, data panels, phone screens)
+  night:     '#05060f',
+
+  // In-app accent ramp, legible on the dark panels
+  electric:  '#5C8DFF',
+  ice:       '#D6E4FF',
+  green:     '#00E87B',
+  amber:     '#F5A000',
+  red:       '#FF6B6B',
+
+  // The same semantics darkened enough to read on paper
+  greenInk:  '#00815A',
+  amberInk:  '#A96B00',
+  redInk:    '#C2403F',
+  blueInk:   '#2C4ED4',
 }
 
 /* Host Grotesk throughout, display and body alike. The brand book (p.4)

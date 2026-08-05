@@ -12,11 +12,11 @@ import { Grain, useIsMobile } from './brand.jsx'
 import { C, F, EASE, SIGNALS, JOINTS, DAY } from './tokens.js'
 
 /* ── Phone frame ─────────────────────────────────────────────────── */
-export function Phone({ children, width = 300, glow = C.electric, style }) {
+export function Phone({ children, width = 300, style }) {
   const h = width * 2.06
   return (
     <div style={{ width,height:h,borderRadius:width*0.155,background:'#06080f',position:'relative',flexShrink:0,
-      boxShadow:`0 60px 120px rgba(0,0,0,0.85), 0 0 90px ${glow}1c, 0 0 0 1px rgba(214,228,255,0.18), 0 0 0 3px rgba(255,255,255,0.03)`,
+      boxShadow:`0 30px 70px rgba(17,35,120,0.3), 0 6px 18px rgba(17,35,120,0.14), 0 0 0 1px rgba(17,35,120,0.16)`,
       ...style }}>
       {/* Side buttons */}
       <div style={{ position:'absolute',left:-3,top:'17%',width:3,height:'5%',background:'rgba(255,255,255,0.15)',borderRadius:'2px 0 0 2px' }} />

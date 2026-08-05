@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useSpring } from 'framer-motion'
 import './index.css'
-import { useIsMobile, PageGrain } from './brand.jsx'
+import { useIsMobile } from './brand.jsx'
 import { C, F, APP_STORE_URL } from './tokens.js'
 import {
   Hero, MotionChapter, RadarChapter, SpotlightChapter,
@@ -48,25 +48,9 @@ function useActiveChapter() {
 function Rail() {
   const active = useActiveChapter()
   const mobile = useIsMobile()
-  const [solid, setSolid] = useState(false)
   const navRef = useRef(null)
   const { scrollYProgress } = useScroll()
   const bar = useSpring(scrollYProgress, { stiffness: 140, damping: 28, restDelta: 0.001 })
-
-  /* The rail turns opaque once the hero is three quarters gone. Driven by an
-     observer on the hero rather than a scroll handler: no state update on
-     every scroll frame, and nothing to go stale if a scroll event is missed.
-     A -25% top margin makes the hero stop intersecting at exactly 0.75vh. */
-  useEffect(() => {
-    const hero = document.getElementById('top')
-    if (!hero) return
-    const obs = new IntersectionObserver(
-      ([e]) => setSolid(!e.isIntersecting),
-      { rootMargin: '-25% 0px 0px 0px', threshold: 0 },
-    )
-    obs.observe(hero)
-    return () => obs.disconnect()
-  }, [])
 
   /* On narrow screens the five chapters do not all fit, so keep the current
      one scrolled into the rail rather than letting it drift off the edge. */
@@ -81,28 +65,22 @@ function Rail() {
 
   return (
     <div style={{ position:'fixed',top:0,left:0,right:0,zIndex:90,
-      background: solid ? 'rgba(4,5,14,0.86)' : 'transparent',
-      backdropFilter: solid ? 'blur(22px)' : 'none',
-      WebkitBackdropFilter: solid ? 'blur(22px)' : 'none',
-      borderBottom: `1px solid ${solid ? 'rgba(214,228,255,0.1)' : 'transparent'}`,
-      transition:'background 0.4s, border-color 0.4s' }}>
+      background:'rgba(247,238,221,0.9)',backdropFilter:'blur(18px)',
+      WebkitBackdropFilter:'blur(18px)',borderBottom:`1px solid ${C.line}` }}>
 
-      <div style={{ height: mobile ? 52 : 56,display:'flex',alignItems:'center',
-        gap:mobile ? 14 : 30,padding: mobile ? '0 18px' : '0 26px',maxWidth:1520,margin:'0 auto' }}>
+      <div style={{ height: mobile ? 52 : 58,display:'flex',alignItems:'center',
+        gap:mobile ? 10 : 28,padding: mobile ? '0 18px' : '0 6vw',maxWidth:1440,margin:'0 auto' }}>
 
         <a href="#top" style={{ display:'flex',alignItems:'center',flexShrink:0 }}>
-          <img src="/logos/Jeani Wordmark White.png" alt="Jeani"
-            style={{ height: mobile ? 18 : 21,opacity:0.95 }} />
+          <img src="/logos/Jeani Wordmark Blue.png" alt="Jeani"
+            style={{ height: mobile ? 17 : 20 }} />
         </a>
 
         {/* minWidth:0 matters: a flex item defaults to min-width:auto and will
             refuse to shrink below its content, which pushed this rail wider
             than the viewport on a phone and shunted 04 and 05 off-screen. */}
-        {/* minWidth:0 matters: a flex item defaults to min-width:auto and will
-            refuse to shrink below its content, which pushed this rail wider
-            than the viewport on a phone and shunted 04 and 05 off-screen. */}
         <nav ref={navRef} className="no-bar" style={{ display:'flex',gap:mobile ? 2 : 4,flex:1,
-          minWidth:0,overflowX:'auto',alignItems:'center',justifyContent:'flex-start' }}>
+          minWidth:0,overflowX:'auto',alignItems:'center' }}>
           {CHAPTERS.map(c => {
             const on = active === c.id
             // On a phone every chapter is a number and exactly one spells
@@ -115,15 +93,14 @@ function Rail() {
                 aria-label={c.label} aria-current={on ? 'true' : undefined}
                 style={{ display:'flex',alignItems:'center',gap: showLabel ? 6 : 0,
                   textDecoration:'none',flexShrink:0,
-                  padding: mobile ? '6px 8px' : '7px 14px',borderRadius:20,
-                  background: on ? 'rgba(251,236,207,0.12)' : 'transparent',
-                  transition:'background 0.25s' }}>
+                  padding: mobile ? '6px 8px' : '7px 13px',borderRadius:18,
+                  background: on ? `${C.navy}12` : 'transparent',transition:'background 0.25s' }}>
                 <span style={{ fontFamily:F.display,fontSize: mobile ? 10.5 : 11,fontWeight:700,
-                  color: on ? C.sand : 'rgba(255,255,255,0.34)' }}>{c.n}</span>
+                  color: on ? C.navy : C.inkMute }}>{c.n}</span>
                 {showLabel && (
                   <span style={{ fontFamily:F.body,fontSize: mobile ? 10 : 11.5,fontWeight: on ? 700 : 500,
-                    letterSpacing: mobile ? 0.8 : 1.4,textTransform:'uppercase',whiteSpace:'nowrap',
-                    color: on ? '#fff' : 'rgba(255,255,255,0.5)',transition:'color 0.25s' }}>
+                    letterSpacing: mobile ? 0.8 : 1.2,textTransform:'uppercase',whiteSpace:'nowrap',
+                    color: on ? C.navy : C.inkSoft,transition:'color 0.25s' }}>
                     {c.label}
                   </span>
                 )}
@@ -134,23 +111,22 @@ function Rail() {
 
         {!mobile && (
           <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer"
-            style={{ flexShrink:0,padding:'9px 20px',borderRadius:22,background:C.sand,color:C.navy,
-              textDecoration:'none',fontFamily:F.body,fontSize:12,fontWeight:700,letterSpacing:0.4 }}>
+            style={{ flexShrink:0,padding:'9px 18px',borderRadius:20,background:C.navy,color:C.paper,
+              textDecoration:'none',fontFamily:F.body,fontSize:12.5,fontWeight:700 }}>
             Free trial
           </a>
         )}
       </div>
 
       {/* Scroll progress */}
-      <motion.div style={{ height:2,background:`linear-gradient(90deg, ${C.electric}, ${C.sand})`,
-        transformOrigin:'0%',scaleX:bar }} />
+      <motion.div style={{ height:2,background:C.navy,transformOrigin:'0%',scaleX:bar }} />
     </div>
   )
 }
 
 export default function App() {
   return (
-    <div style={{ background:C.night,position:'relative' }}>
+    <div style={{ background:C.paper,position:'relative' }}>
       <Rail />
       <Hero />
       <MotionChapter />
@@ -163,7 +139,6 @@ export default function App() {
       <ScienceChapter />
       <PlansChapter />
       <Footer />
-      <PageGrain />
     </div>
   )
 }

@@ -39,8 +39,8 @@ html {
 
 body, #root {
   width: 100%;
-  background: #05060f;
-  color: #fff;
+  background: #F7EEDD;
+  color: #141A3A;
   font-family: 'HostGrotesk', system-ui, sans-serif;
 }
 
@@ -57,7 +57,7 @@ body {
 /* The whole demo is one continuous scroll now: nothing is height-locked,
    so nothing clips on short laptop screens. */
 
-::selection { background: #5C8DFF; color: #05060f; }
+::selection { background: #112378; color: #F7EEDD; }
 
 /* Hide scrollbars on the horizontal pill rails only */
 .no-bar::-webkit-scrollbar { display: none; }
